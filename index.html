@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Code Persona Test</title>
+    <meta
+      name="description"
+      content="一个 Bear Blog 风格的代码人格诊断小网站。30 道题，15 维向量，HTTP 状态码人格。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell" aria-live="polite">
+      <header class="site-head">
+        <a class="brand" href="./" aria-label="Code Persona Test home">code-persona-test</a>
+        <span class="meta">no login / local only / ascii mood</span>
+      </header>
+
+      <section class="terminal" id="terminal">
+        <pre class="ascii" aria-hidden="true">
++--------------------------------------------------+
+| CODE PERSONA TEST                                |
+| 30 questions / 15 dimensions / manhattan match   |
++--------------------------------------------------+</pre
+        >
+
+        <div id="screen" class="screen"></div>
+      </section>
+    </main>
+
+    <nav class="keypad" aria-label="Answer keyboard">
+      <button type="button" data-key="a">a</button>
+      <button type="button" data-key="b">b</button>
+      <button type="button" data-key="c">c</button>
+      <button type="button" data-key="d">d</button>
+      <button type="button" data-key="backspace">del</button>
+      <button type="button" data-key="enter">enter</button>
+    </nav>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
