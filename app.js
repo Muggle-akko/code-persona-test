@@ -177,6 +177,7 @@
     p("201", "Created", "创造建构型", "你的快乐常出现在“不然我们做一个吧”之后。空白不会吓退你，反而像一张等你开头的便签。", "启动项目、搭骨架、把想法变成看得见的东西。", "兴奋时容易低估后续维护，别让灵感变成未来自己的待办。", "M,M,M,M,M,M,M,H,M,H,M,H,M,M,H", "+ new +\n(＾▽＾)つ□"),
     p("204", "No Content", "极简沉默型", "你把世界调成低噪音模式。能一句话说明白，就不会铺三层情绪垫。", "克制、利落、少废话，擅长把复杂场面降噪。", "有时别人需要的不只是结果，也需要一点“我在”的回声。", "H,H,H,H,H,L,M,M,L,L,L,H,L,L,L", "...\n( -_-)"),
     p("301", "Moved Permanently", "长期迁移型", "你很会和旧版本的自己和平告别。只要新路径更合理，你愿意慢慢搬家、整理、重定向。", "重构旧习惯、规划长期路线、把混乱搬到更合适的位置。", "别把每个小问题都升级成大型搬迁，有些东西擦一擦也能继续用。", "M,H,M,H,M,M,H,H,H,M,H,M,M,H,M", "old -> new\n(｀へ´)>"),
+    p("302", "Found", "临时重定向型", "你很会在现场找到一条暂时能走的路。计划变了也不慌，先把人和事导向可用入口，之后再慢慢修正。", "灵活、会转弯、擅长临场分流，能把卡住的局面先带动起来。", "小心临时方案用太久变成默认路线，记得回头确认真正的目的地。", "M,M,H,M,M,M,H,M,H,M,M,H,H,H,M", "go -> ?\n( ＾_＾)つ"),
     p("304", "Not Modified", "保守缓存型", "你珍惜好用的旧方法。不是不进步，是你知道稳定经验也是一种资产。", "复用、节省成本、保护稳定，讨厌为了新鲜而新鲜。", "缓存太久会错过更新，偶尔也要刷新一下页面。", "H,H,H,H,M,L,M,M,L,L,L,M,L,L,L", "[cached]\n(￣ー￣)"),
     p("400", "Bad Request", "高敏纠错型", "你对含糊、甩锅和“随便”有天然雷达。别人觉得差不多，你已经看到后面会怎么翻车。", "发现歧义、澄清输入、帮大家少走弯路。", "别让每一次不清楚都变成你的内耗，有些问题可以先标红，不必立刻背走。", "M,M,M,H,M,H,H,M,L,L,M,M,M,M,M", "???\n(눈_눈)"),
     p("401", "Unauthorized", "权限边界型", "你的私人边界自带门禁。熟归熟，规则归规则，亲密也不等于无限访问。", "守边界、重授权，能保护自己和重要关系不被透支。", "有时可以解释一下“为什么不行”，世界会少误会你一点。", "H,H,M,H,H,M,M,M,L,L,L,M,L,M,L", "[locked]\n(｀_´)ゞ"),
@@ -214,11 +215,14 @@
     startedAt: 0,
     finishedAt: 0,
     currentCode: "",
-    sharedCode: ""
+    sharedCode: "",
+    lastStreamedIndex: -1,
+    userName: "user"
   };
 
   var screen = document.getElementById("screen");
   var keypad = document.querySelector(".keypad");
+  var streamTimers = [];
 
   function q(dimension, text, options) {
     var normalizedOptions = options.map(function (option) {
@@ -276,7 +280,15 @@
       .replace(/"/g, "&quot;");
   }
 
+  function prefersReducedMotion() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
   function render() {
+    if (state.mode !== "quiz") {
+      cancelTextStream();
+    }
+
     if (state.mode === "intro") {
       renderIntro();
       updateKeypadState();
@@ -311,17 +323,21 @@
     var lastReceiptHtml = lastReceipt
       ? [
           '<div class="last-receipt">',
-          '<p class="line muted">last receipt</p>',
-          '<p class="line">' +
-            escapeHtml(lastReceipt.code + " " + lastReceipt.status + " - " + lastReceipt.name) +
-            "</p>",
-          '<p class="line muted">fit ' +
-            escapeHtml(lastReceipt.match + "% / " + formatDateTime(lastReceipt.generatedAt)) +
+          '<p class="line"><span class="meta-label meta-name">&gt; Last login</span>: ' +
+            escapeHtml(
+              lastReceipt.code +
+                " " +
+                lastReceipt.status +
+                " - " +
+                lastReceipt.name +
+                " / " +
+                formatDateTime(lastReceipt.generatedAt)
+            ) +
             "</p>",
           '<div class="mini-actions">',
           '<button class="line-button" type="button" data-action="open-last" data-code="' +
             escapeHtml(lastReceipt.code) +
-            '">open last</button>',
+            '">review 查看上次结果</button>',
           "</div>",
           "</div>"
         ].join("")
@@ -350,8 +366,13 @@
       '<p class="line">系统会吐出一个 HTTP 风格的人格码，像一张来自终端的小票。</p>',
       '</div>',
       '<div class="block">',
-      '<p class="prompt">press enter</p>',
-      '<p class="input-line">&gt; <span class="cursor"></span></p>',
+      '<p class="prompt">name 输入名字</p>',
+      '<label class="name-line"><span class="input-marker">&gt;</span><input id="name-input" class="name-input" type="text" maxlength="24" placeholder="user" value="' +
+        escapeHtml(state.userName === "user" ? "" : state.userName) +
+        '" autocomplete="nickname" /></label>',
+      '<div class="mini-actions">',
+      '<button class="line-button" type="button" data-action="start-test">start 开始测试</button>',
+      "</div>",
       state.notice ? '<p class="hint warn">' + escapeHtml(state.notice) + "</p>" : "",
       "</div>",
       draftHtml,
@@ -362,6 +383,7 @@
   function renderQuiz() {
     var item = questions[state.index];
     var picked = state.buffer;
+    var shouldStream = state.lastStreamedIndex !== state.index && !prefersReducedMotion();
     var optionHtml = item.options
       .map(function (option) {
         var className =
@@ -371,28 +393,48 @@
         return [
           '<button class="' + className + '" type="button" data-answer="' + option.key + '">',
           '<span class="letter">[' + option.key + "]</span>",
-          '<span>' + escapeHtml(option.text) + "</span>",
+          '<span class="option-text"' +
+            (shouldStream ? ' data-stream-text="' + escapeHtml(option.text) + '"' : "") +
+            ">" +
+            (shouldStream ? "" : escapeHtml(option.text)) +
+            "</span>",
           "</button>"
         ].join("");
       })
       .join("");
 
+    cancelTextStream();
+    if (shouldStream) {
+      state.lastStreamedIndex = state.index;
+    }
+
     screen.innerHTML = [
-      '<p class="progress">question ' +
-        String(state.index + 1).padStart(2, "0") +
-        "/" +
-        questions.length +
+      '<div class="quiz-meta">',
+      '<p><span class="meta-label meta-name">&gt; Name</span>: ' +
+        escapeHtml(getReceiptSignature()) +
         "</p>",
-      '<pre class="progress-bar">' + escapeHtml(formatProgressBar(state.index, questions.length)) + "</pre>",
+      '<p><span class="meta-label meta-status">&gt; Status</span>：<span class="spinner" aria-hidden="true"></span> answering...</p>',
+      '<p><span class="meta-label meta-question">&gt; Question</span>：<span class="progress-bar">' +
+        escapeHtml(formatProgressBar(state.index, questions.length)) +
+        "</span></p>",
+      "</div>",
       '<div class="question">',
-      '<p class="prompt">' + escapeHtml(item.text) + "</p>",
+      '<p class="prompt">' +
+        (shouldStream
+          ? '<span data-stream-text="' + escapeHtml(item.text) + '"></span>'
+          : escapeHtml(item.text)) +
+        "</p>",
       '<div class="options">' + optionHtml + "</div>",
       "</div>",
-      '<p class="input-line">&gt; ' +
+      '<p class="input-line"><span class="input-marker">&gt;</span> ' +
         escapeHtml(state.buffer) +
         '<span class="cursor"></span></p>',
       state.notice ? '<p class="hint warn">' + escapeHtml(state.notice) + "</p>" : ""
     ].join("");
+
+    if (shouldStream) {
+      startTextStream();
+    }
   }
 
   function renderPrinting() {
@@ -401,7 +443,7 @@
       '<p class="line">$ print receipt</p>',
       '<p class="line ok">status: generating</p>',
       '<pre class="printer-art">┌────────────────────────┐\n│ //// thermal head //// │\n└──────────┬─────────────┘\n           │\n           v\n        [ receipt ]</pre>',
-      '<p class="input-line">&gt; <span class="printer-dots">printing</span><span class="cursor"></span></p>',
+      '<p class="input-line"><span class="input-marker">&gt;</span> <span class="printer-dots">printing</span><span class="cursor"></span></p>',
       '</div>'
     ].join("");
   }
@@ -413,10 +455,7 @@
     var printout = formatReceiptBars(result.raw, result.match, result.answerStats);
     var generatedAt = state.finishedAt || Date.now();
     var durationMs = Math.max(0, generatedAt - (state.startedAt || generatedAt));
-    var signature = buildAnswerSignature(result);
-    var hiddenSection = persona.hidden
-      ? section("EASTER EGG 彩蛋信号", result.hiddenReason)
-      : "";
+    var signature = getReceiptSignature();
 
     state.currentCode = persona.code;
     saveLastReceipt(persona, result.match, generatedAt);
@@ -428,7 +467,7 @@
       '<pre class="receipt-code">' + escapeHtml(formatCodeBox(persona)) + "</pre>",
       '<pre class="receipt-face">' + escapeHtml(persona.face) + "</pre>",
       '<h1 class="result-title">' + escapeHtml(persona.name) + "</h1>",
-      '<p class="receipt-stamp">' + escapeHtml(persona.hidden ? "EASTER EGG / 彩蛋出没" : "PERSONA GENERATED / 人格码已生成") + "</p>",
+      '<p class="receipt-stamp">' + escapeHtml(getReceiptStamp(persona)) + "</p>",
       '<dl class="receipt-facts">',
       fact("NO. 编号", formatTicketNumber(persona.code, generatedAt)),
       fact("GENERATED 生成时间", formatDateTime(generatedAt)),
@@ -437,34 +476,23 @@
       fact("UNCLEAR 不确定", result.answerStats.dCount + "/" + questions.length),
       fact("SIGNATURE 小票签名", signature),
       fact("PACE 响应节奏", getPaceLabel(durationMs)),
+      fact("MODE 建议模式", extras.mode),
+      fact("TAGS 标签", extras.tags.join(" / ")),
       "</dl>",
       '<div class="result-grid">',
-      section("DIAGNOSIS 诊断", persona.summary),
+      section("DIAGNOSIS 诊断", mergeMotto(persona.summary, extras.motto)),
       section("BEST AT 擅长", persona.strength),
       section("WATCH OUT 注意", persona.caution),
-      section("MODE 建议模式", extras.mode),
-      section("MOTTO 小纸条", extras.motto),
-      tagsSection(extras.tags),
-      hiddenSection,
-      '<div class="result-section"><h2>RESPONSE TRACE 响应痕迹</h2><pre class="visualizer">' +
-        escapeHtml(formatTraceCard(result, durationMs, signature)) +
-        "</pre></div>",
       '<div class="result-section"><h2>SIGNALS 信号</h2><pre class="visualizer">' +
         escapeHtml(printout) +
         "</pre></div>",
-      '<div class="result-section"><h2>ANSWER MIX 答案分布</h2><pre class="visualizer">' +
-        escapeHtml(formatAnswerMix(result.answerStats)) +
-        "</pre></div>",
       "</div>",
-      '<p class="receipt-footer">-- end of receipt / 小票结束 --</p>',
+      '<p class="receipt-footer">-- receipt sealed / 小票已封存 --</p>',
       "</article>",
       '<div class="actions">',
-      '<button class="text-button" type="button" data-action="restart">restart</button>',
-      '<button class="text-button" type="button" data-action="copy">copy</button>',
-      '<button class="text-button" type="button" data-action="link">link</button>',
-      '<button class="text-button" type="button" data-action="share">share</button>',
-      '<button class="text-button" type="button" data-action="save">save txt</button>',
-      '<button class="text-button" type="button" data-action="print">print</button>',
+      '<button class="text-button" type="button" data-action="restart">restart 重新测</button>',
+      '<button class="text-button" type="button" data-action="copy">copy 复制</button>',
+      '<button class="text-button" type="button" data-action="share">share 分享小票</button>',
       "</div>",
       state.notice ? '<p class="hint ok">' + escapeHtml(state.notice) + "</p>" : ""
     ].join("");
@@ -478,33 +506,32 @@
 
     screen.innerHTML = [
       '<article class="receipt-paper">',
-      '<p class="receipt-kicker">SHARED CODE RECEIPT / 共享人格码小票</p>',
+      '<p class="receipt-kicker">CODE PERSONA RECEIPT / 代码人格小票</p>',
       '<pre class="receipt-code">' + escapeHtml(formatCodeBox(persona)) + "</pre>",
       '<pre class="receipt-face">' + escapeHtml(persona.face) + "</pre>",
       '<h1 class="result-title">' + escapeHtml(persona.name) + "</h1>",
-      '<p class="receipt-stamp">OPENED FROM LINK / 从链接打开</p>',
+      '<p class="receipt-stamp">' + escapeHtml(getReceiptStamp(persona)) + "</p>",
       '<dl class="receipt-facts">',
       fact("CODE 人格码", persona.code),
       fact("STATUS 状态", persona.status),
+      fact("PACE 响应节奏", "opened from link / 链接打开"),
       fact("MODE 建议模式", extras.mode),
       fact("TAGS 标签", extras.tags.join(" / ")),
       "</dl>",
       '<div class="result-grid">',
-      section("DIAGNOSIS 诊断", persona.summary),
+      section("DIAGNOSIS 诊断", mergeMotto(persona.summary, extras.motto)),
       section("BEST AT 擅长", persona.strength),
       section("WATCH OUT 注意", persona.caution),
-      section("MOTTO 小纸条", extras.motto),
-      tagsSection(extras.tags),
-      '<div class="result-section"><h2>ASCII SNAPSHOT 字符快照</h2><pre class="visualizer">' +
-        escapeHtml(buildSharedVisualizer(persona, extras)) +
+      '<div class="result-section"><h2>SIGNALS 信号</h2><pre class="visualizer">' +
+        escapeHtml(formatPersonaSignalBars(persona)) +
         "</pre></div>",
       "</div>",
-      '<p class="receipt-footer">-- shared receipt / 共享小票 --</p>',
+      '<p class="receipt-footer">-- receipt sealed / 小票已封存 --</p>',
       "</article>",
       '<div class="actions">',
-      '<button class="text-button" type="button" data-action="restart">start test</button>',
-      '<button class="text-button" type="button" data-action="copy-shared">copy</button>',
-      '<button class="text-button" type="button" data-action="print">print</button>',
+      '<button class="text-button" type="button" data-action="restart">restart 再测一次</button>',
+      '<button class="text-button" type="button" data-action="copy-shared">copy 复制</button>',
+      '<button class="text-button" type="button" data-action="share">share 分享小票</button>',
       "</div>",
       state.notice ? '<p class="hint ok">' + escapeHtml(state.notice) + "</p>" : ""
     ].join("");
@@ -530,22 +557,82 @@
     );
   }
 
-  function tagsSection(tags) {
-    return (
-      '<div class="result-section"><h2>TAGS 标签</h2><div class="receipt-tags">' +
-      tags
-        .map(function (tag) {
-          return "<span>" + escapeHtml(tag) + "</span>";
-        })
-        .join("") +
-      "</div></div>"
-    );
+  function getReceiptStamp(persona) {
+    if (persona.hidden) return "TEAPOT / 隐藏人格";
+    return "ISSUED / 人格码已出票";
   }
 
   function formatProgressBar(index, total) {
-    var slots = 18;
+    var slots = 16;
     var filled = Math.round(((index + 1) / total) * slots);
-    return "[" + "=".repeat(filled) + ".".repeat(slots - filled) + "]";
+    var current = String(index + 1).padStart(2, "0");
+    return "[" + "█".repeat(filled) + "░".repeat(slots - filled) + "] " + current + "/" + total;
+  }
+
+  function cancelTextStream() {
+    streamTimers.forEach(function (timer) {
+      window.clearTimeout(timer);
+    });
+    streamTimers = [];
+    Array.prototype.forEach.call(screen.querySelectorAll(".is-streaming"), function (node) {
+      node.classList.remove("is-streaming");
+    });
+  }
+
+  function startTextStream() {
+    var nodes = Array.prototype.slice.call(screen.querySelectorAll("[data-stream-text]"));
+    var nodeIndex = 0;
+
+    function schedule(callback, delay) {
+      var timer = window.setTimeout(callback, delay);
+      streamTimers.push(timer);
+    }
+
+    function playNextNode() {
+      var node = nodes[nodeIndex];
+
+      if (!node) {
+        streamTimers = [];
+        return;
+      }
+
+      if (!document.body.contains(node)) {
+        nodeIndex += 1;
+        playNextNode();
+        return;
+      }
+
+      streamTextInto(node, node.getAttribute("data-stream-text") || "", function () {
+        nodeIndex += 1;
+        schedule(playNextNode, 22);
+      }, schedule);
+    }
+
+    playNextNode();
+  }
+
+  function streamTextInto(node, text, done, schedule) {
+    var index = 0;
+    var step = Math.max(2, Math.ceil(text.length / 18));
+
+    node.classList.add("is-streaming");
+
+    function tick() {
+      if (!document.body.contains(node)) return;
+
+      index = Math.min(text.length, index + step);
+      node.textContent = text.slice(0, index);
+
+      if (index >= text.length) {
+        node.classList.remove("is-streaming");
+        done();
+        return;
+      }
+
+      schedule(tick, 18);
+    }
+
+    tick();
   }
 
   function scoreAnswers() {
@@ -671,6 +758,23 @@
       .join("\n");
   }
 
+  function formatPersonaSignalBars(persona) {
+    var rows = [
+      ["STABLE 稳定", normalizeTargetGroup(persona.target, 0, 3)],
+      ["BOUND 边界", normalizeTargetGroup(persona.target, 3, 6)],
+      ["PARSE 解析", normalizeTargetGroup(persona.target, 6, 9)],
+      ["DRIVE 行动", normalizeTargetGroup(persona.target, 9, 12)],
+      ["LINK 连接", normalizeTargetGroup(persona.target, 12, 15)]
+    ];
+
+    return rows
+      .map(function (row) {
+        var label = row[0].padEnd(13, " ");
+        return label + asciiBar(row[1]);
+      })
+      .join("\n");
+  }
+
   function formatAnswerMix(answerStats) {
     return ["a", "b", "c", "d"]
       .map(function (key) {
@@ -681,30 +785,23 @@
       .join("\n");
   }
 
-  function formatTraceCard(result, durationMs, signature) {
-    var answerStats = result.answerStats;
-    return [
-      "signature : " + signature,
-      "pace      : " + getPaceLabel(durationMs),
-      "clarity   : " + getClarityLabel(answerStats),
-      "packet    : " + answerStats.total + " answers / " + answerStats.dCount + " unclear",
-      "receipt   : " + result.persona.code + " -> " + result.persona.status
-    ].join("\n");
+  function getReceiptSignature() {
+    return normalizeUserName(state.userName);
   }
 
-  function buildAnswerSignature(result) {
-    var source = state.answers
-      .map(function (answer) {
-        return answer.key + answer.value;
-      })
-      .join("|");
-    var hash = result.persona.code.length;
+  function normalizeUserName(value) {
+    var name = String(value || "").trim().replace(/\s+/g, " ");
+    return name ? name.slice(0, 24) : "user";
+  }
 
-    for (var index = 0; index < source.length; index += 1) {
-      hash = (hash * 31 + source.charCodeAt(index)) % 1679616;
-    }
+  function readNameInput() {
+    var input = document.getElementById("name-input");
+    return normalizeUserName(input ? input.value : state.userName);
+  }
 
-    return result.persona.code + "-" + hash.toString(36).toUpperCase().padStart(4, "0");
+  function mergeMotto(text, motto) {
+    var note = String(motto || "").replace(/^今日小纸条：/, "");
+    return note ? text + " " + note : text;
   }
 
   function getPaceLabel(durationMs) {
@@ -727,11 +824,18 @@
     return (sum - 6) / 12;
   }
 
+  function normalizeTargetGroup(target, start, end) {
+    var sum = target.slice(start, end).reduce(function (total, value) {
+      return total + value;
+    }, 0);
+    return sum / ((end - start) * 2);
+  }
+
   function asciiBar(value) {
-    var total = 12;
+    var total = 17;
     var filled = Math.max(0, Math.min(total, Math.round(value * total)));
     var percent = Math.round(value * 100);
-    return "[" + "#".repeat(filled) + "-".repeat(total - filled) + "] " + String(percent).padStart(3, " ") + "%";
+    return "█".repeat(filled) + "░".repeat(total - filled) + " " + String(percent).padStart(3, " ") + "%";
   }
 
   function formatTicketNumber(code, ms) {
@@ -778,25 +882,26 @@
 
   function getPersonaExtras(code) {
     var extras = {
-      "200": ["稳态营业", "今日小纸条：你可以可靠，但不必全天候在线。"],
-      "201": ["先做一个小版本", "今日小纸条：灵感很好，记得给未来的自己留说明书。"],
-      "204": ["低噪音模式", "今日小纸条：沉默很酷，偶尔回个“收到”也很酷。"],
-      "301": ["慢慢迁移", "今日小纸条：换路不是背叛旧路，是给自己更合适的出口。"],
-      "304": ["缓存复用", "今日小纸条：旧方法能用，但别忘了偶尔刷新。"],
-      "400": ["先澄清输入", "今日小纸条：你不是难搞，你是在保护大家不要集体翻车。"],
-      "401": ["门禁开启", "今日小纸条：边界感不是冷漠，是认真对待彼此。"],
-      "402": ["预算优先", "今日小纸条：你的精力也很贵，记得把自己算进成本。"],
-      "403": ["原则红线", "今日小纸条：拒绝可以很坚定，也可以很温柔。"],
-      "404": ["地图生成中", "今日小纸条：迷路时别急着自责，你可能正在发现新入口。"],
-      "408": ["延迟响应", "今日小纸条：慢一点没关系，记得告诉别人你还在。"],
-      "409": ["冲突拆解", "今日小纸条：不是所有矛盾都需要你亲手修好。"],
-      "422": ["深度解析", "今日小纸条：看出不合理很珍贵，先落一小步也很珍贵。"],
-      "429": ["主动限流", "今日小纸条：你不是不行，你只是不能无限并发。"],
-      "500": ["降级恢复", "今日小纸条：高能大脑也需要散热片。"],
-      "502": ["频道转译", "今日小纸条：你可以当桥，但不必替两岸负责。"],
-      "503": ["维护窗口", "今日小纸条：暂停营业不是坏掉，是保养。"],
-      "504": ["超时换路", "今日小纸条：等不到的回复，不一定值得一直等。"],
-      "418": ["茶壶协议", "今日小纸条：如果世界无法解析你，先优雅地冒个热气。"]
+      "200": ["steady serving / 稳态营业", "今日小纸条：你可以可靠，但不必全天候在线。"],
+      "201": ["create first / 先做小版", "今日小纸条：灵感很好，记得给未来的自己留说明书。"],
+      "204": ["low-noise mode / 低噪音模式", "今日小纸条：沉默很酷，偶尔回个“收到”也很酷。"],
+      "301": ["steady migration / 慢慢迁移", "今日小纸条：换路不是背叛旧路，是给自己更合适的出口。"],
+      "302": ["temporary redirect / 临时改道", "今日小纸条：能绕开堵点是能力，记得别把临时路牌钉成永久门牌。"],
+      "304": ["cached reuse / 缓存复用", "今日小纸条：旧方法能用，但别忘了偶尔刷新。"],
+      "400": ["clarify input / 先澄清输入", "今日小纸条：你不是难搞，你是在保护大家不要集体翻车。"],
+      "401": ["access gate / 门禁开启", "今日小纸条：边界感不是冷漠，是认真对待彼此。"],
+      "402": ["budget first / 预算优先", "今日小纸条：你的精力也很贵，记得把自己算进成本。"],
+      "403": ["hard boundary / 原则红线", "今日小纸条：拒绝可以很坚定，也可以很温柔。"],
+      "404": ["map loading / 地图生成中", "今日小纸条：迷路时别急着自责，你可能正在发现新入口。"],
+      "408": ["delayed response / 延迟响应", "今日小纸条：慢一点没关系，记得告诉别人你还在。"],
+      "409": ["conflict diff / 冲突拆解", "今日小纸条：不是所有矛盾都需要你亲手修好。"],
+      "422": ["deep parsing / 深度解析", "今日小纸条：看出不合理很珍贵，先落一小步也很珍贵。"],
+      "429": ["rate limit / 主动限流", "今日小纸条：你不是不行，你只是不能无限并发。"],
+      "500": ["graceful fallback / 降级恢复", "今日小纸条：高能大脑也需要散热片。"],
+      "502": ["gateway translate / 频道转译", "今日小纸条：你可以当桥，但不必替两岸负责。"],
+      "503": ["maintenance window / 维护窗口", "今日小纸条：暂停营业不是坏掉，是保养。"],
+      "504": ["timeout reroute / 超时换路", "今日小纸条：等不到的回复，不一定值得一直等。"],
+      "418": ["teapot protocol / 茶壶协议", "今日小纸条：如果世界无法解析你，先优雅地冒个热气。"]
     };
     var pair = extras[code] || extras["418"];
 
@@ -813,6 +918,7 @@
       "201": ["开局", "创造", "原型"],
       "204": ["低噪", "极简", "省话"],
       "301": ["迁移", "重整", "长期"],
+      "302": ["灵活", "转向", "临场"],
       "304": ["复用", "稳定", "缓存"],
       "400": ["纠错", "澄清", "雷达"],
       "401": ["边界", "授权", "门禁"],
@@ -831,17 +937,6 @@
     };
 
     return tags[code] || tags["418"];
-  }
-
-  function buildSharedVisualizer(persona, extras) {
-    return [
-      "code     : " + persona.code,
-      "status   : " + persona.status,
-      "mode     : " + extras.mode,
-      "tags     : " + extras.tags.join(" / "),
-      "",
-      formatCodeBox(persona)
-    ].join("\n");
   }
 
   function findPersonaByCode(code) {
@@ -932,6 +1027,7 @@
           index: state.index,
           answers: state.answers,
           startedAt: state.startedAt,
+          userName: state.userName,
           updatedAt: Date.now()
         })
       );
@@ -949,6 +1045,7 @@
 
       draft.index = Math.max(0, Math.min(Number(draft.index) || 0, questions.length - 1));
       draft.startedAt = Number(draft.startedAt) || Date.now();
+      draft.userName = normalizeUserName(draft.userName);
       draft.updatedAt = Number(draft.updatedAt) || draft.startedAt;
       draft.answers = draft.answers
         .filter(function (answer) {
@@ -987,6 +1084,24 @@
     state.finishedAt = 0;
     state.currentCode = "";
     state.sharedCode = "";
+    state.lastStreamedIndex = -1;
+    state.userName = draft.userName;
+    clearResultHash();
+  }
+
+  function startTest() {
+    state.mode = "quiz";
+    state.index = 0;
+    state.buffer = "";
+    state.answers = [];
+    state.notice = "";
+    state.startedAt = Date.now();
+    state.finishedAt = 0;
+    state.currentCode = "";
+    state.sharedCode = "";
+    state.lastStreamedIndex = -1;
+    state.userName = readNameInput();
+    clearDraft();
     clearResultHash();
   }
 
@@ -998,16 +1113,7 @@
 
     if (state.mode === "intro") {
       if (key === "enter") {
-        state.mode = "quiz";
-        state.index = 0;
-        state.buffer = "";
-        state.answers = [];
-        state.startedAt = Date.now();
-        state.finishedAt = 0;
-        state.currentCode = "";
-        state.sharedCode = "";
-        clearDraft();
-        clearResultHash();
+        startTest();
       } else {
         state.notice = "press enter to start";
       }
@@ -1016,26 +1122,10 @@
     }
 
     if (state.mode === "result") {
-      if (key === "enter") {
-        restart();
-      } else if (key === "c") {
-        copyResult();
-      } else {
-        state.notice = "enter = restart, c = copy";
-      }
-      render();
       return;
     }
 
     if (state.mode === "shared") {
-      if (key === "enter") {
-        restart();
-      } else if (key === "c") {
-        copySharedResult();
-      } else {
-        state.notice = "enter = start test, c = copy";
-      }
-      render();
       return;
     }
 
@@ -1098,7 +1188,7 @@
         if (state.mode !== "printing") return;
         state.mode = "result";
         render();
-      }, 650);
+      }, 1800);
       return;
     }
 
@@ -1130,6 +1220,8 @@
     state.finishedAt = 0;
     state.currentCode = "";
     state.sharedCode = "";
+    state.lastStreamedIndex = -1;
+    state.userName = "user";
     clearDraft();
     clearResultHash();
   }
@@ -1145,72 +1237,286 @@
     writeClipboard(buildSharedText(persona), "shared receipt copied");
   }
 
-  function copyResultLink() {
-    var code = state.currentCode || scoreAnswers().persona.code;
-    updateResultHash(code);
-    writeClipboard(buildResultUrl(code), "link copied");
-  }
+  async function shareResult() {
+    var receipt = document.querySelector(".receipt-paper");
+    var code = state.currentCode || readSharedCode() || "receipt";
+    var dataUrl;
 
-  function shareResult() {
-    var text = buildShareText();
-    var code = state.currentCode || scoreAnswers().persona.code;
-    var url = buildResultUrl(code);
-    updateResultHash(code);
-
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "Code Persona Test",
-          text: text,
-          url: url
-        })
-        .then(function () {
-          state.notice = "share sheet opened";
-          render();
-        })
-        .catch(function (error) {
-          if (error && error.name === "AbortError") {
-            state.notice = "share cancelled";
-            render();
-            return;
-          }
-          writeClipboard(text, "share text copied");
-        });
-      return;
-    }
-
-    writeClipboard(text, "share text copied");
-  }
-
-  function saveResultText() {
-    var code = state.currentCode || scoreAnswers().persona.code;
-    saveTextFile("code-persona-" + code + ".txt", buildShareText());
-  }
-
-  function saveTextFile(filename, text) {
-    var blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-    var url = URL.createObjectURL(blob);
-    var link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.setTimeout(function () {
-      URL.revokeObjectURL(url);
-    }, 0);
-    state.notice = "txt saved";
-    render();
-  }
-
-  function printReceipt() {
-    if (!window.print) {
-      state.notice = "print unavailable";
+    if (!receipt) {
+      state.notice = "receipt not ready";
       render();
       return;
     }
 
-    window.print();
+    try {
+      dataUrl = await buildReceiptImage(receipt);
+    } catch (error) {
+      dataUrl = buildReceiptTextImage(receipt);
+    }
+
+    if (isMobileDevice()) {
+      showImageSavePrompt(dataUrl);
+      state.notice = "image ready";
+      render();
+      return;
+    }
+
+    downloadDataUrl("code-persona-" + code + ".png", dataUrl);
+    state.notice = "image downloaded";
+    render();
+  }
+
+  function downloadDataUrl(filename, dataUrl) {
+    var link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  async function buildReceiptImage(receipt) {
+    var rect = receipt.getBoundingClientRect();
+    var exportPadding = 24;
+    var scale = 2;
+    var receiptWidth = Math.ceil(rect.width);
+    var receiptHeight = Math.ceil(receipt.scrollHeight || rect.height);
+    var width = receiptWidth + exportPadding * 2;
+    var height = receiptHeight + exportPadding * 2;
+    var clone = receipt.cloneNode(true);
+    var css = buildReceiptExportCss(width, receiptWidth);
+
+    clone.style.width = receiptWidth + "px";
+    clone.style.maxWidth = "none";
+    clone.style.margin = "0";
+
+    var html = [
+      '<div xmlns="http://www.w3.org/1999/xhtml" class="receipt-export-root">',
+      "<style>",
+      css,
+      "</style>",
+      clone.outerHTML,
+      "</div>"
+    ].join("");
+    var svg = [
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' +
+        width +
+        '" height="' +
+        height +
+        '" viewBox="0 0 ' +
+        width +
+        " " +
+        height +
+        '">',
+      '<foreignObject width="100%" height="100%">',
+      html,
+      "</foreignObject>",
+      "</svg>"
+    ].join("");
+
+    return svgToPng(svg, width, height, scale);
+  }
+
+  function buildReceiptExportCss(width, receiptWidth) {
+    var rootStyle = window.getComputedStyle(document.documentElement);
+    var variableNames = ["--bg", "--ink", "--muted", "--line", "--accent", "--accent-2", "--soft", "--warn", "--shadow", "--mono", "--receipt"];
+    var variables = variableNames
+      .map(function (name) {
+        return name + ":" + rootStyle.getPropertyValue(name) + ";";
+      })
+      .join("");
+
+    return [
+      ":root,.receipt-export-root{",
+      variables,
+      "color-scheme:" + (document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light") + ";",
+      "}",
+      collectPageCss(),
+      ".receipt-export-root{",
+      "box-sizing:border-box;width:" + width + "px;min-height:100%;padding:24px;background:var(--bg);color:var(--ink);",
+      "font-family:var(--mono);font-size:16px;line-height:1.62;letter-spacing:0;",
+      "}",
+      ".receipt-export-root .receipt-paper{",
+      "width:" + receiptWidth + "px;max-width:none;margin:0;box-shadow:0 8px 28px var(--shadow);",
+      "}",
+      ".receipt-export-root .actions,.receipt-export-root .hint{display:none;}",
+      ".receipt-export-root,.receipt-export-root *{scrollbar-width:none;}",
+      ".receipt-export-root *::-webkit-scrollbar{display:none;width:0;height:0;}",
+      ".receipt-export-root .receipt-paper,.receipt-export-root .receipt-code,.receipt-export-root .receipt-face,.receipt-export-root .visualizer{overflow:visible!important;}"
+    ].join("");
+  }
+
+  function collectPageCss() {
+    return Array.prototype.map
+      .call(document.styleSheets, function (sheet) {
+        try {
+          return Array.prototype.map
+            .call(sheet.cssRules || [], function (rule) {
+              return rule.cssText;
+            })
+            .join("\n");
+        } catch (error) {
+          return "";
+        }
+      })
+      .join("\n");
+  }
+
+  function svgToPng(svg, width, height, scale) {
+    return new Promise(function (resolve, reject) {
+      var image = new Image();
+      var canvas = document.createElement("canvas");
+      var context = canvas.getContext("2d");
+      var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      image.onload = function () {
+        context.scale(scale, scale);
+        context.drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      image.onerror = reject;
+      image.src = url;
+    });
+  }
+
+  function buildReceiptTextImage(receipt) {
+    var style = window.getComputedStyle(document.documentElement);
+    var bg = style.getPropertyValue("--bg").trim() || "#fdfcf7";
+    var ink = style.getPropertyValue("--ink").trim() || "#151515";
+    var muted = style.getPropertyValue("--muted").trim() || "#69665f";
+    var accent = style.getPropertyValue("--accent-2").trim() || "#225c7a";
+    var lines = normalizeReceiptLines(receipt.innerText);
+    var scale = 2;
+    var width = 760;
+    var paddingX = 44;
+    var paddingY = 44;
+    var lineHeight = 25;
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
+    var wrappedLines;
+    var height;
+
+    context.font = "18px Courier New, ui-monospace, monospace";
+    wrappedLines = wrapReceiptLines(lines, context, width - paddingX * 2);
+    height = Math.max(760, paddingY * 2 + wrappedLines.length * lineHeight + 34);
+
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    context.scale(scale, scale);
+    context.fillStyle = bg;
+    context.fillRect(0, 0, width, height);
+    drawTearLine(context, paddingX, width - paddingX, 24, muted);
+    drawTearLine(context, paddingX, width - paddingX, height - 24, muted);
+
+    context.fillStyle = ink;
+    context.font = "18px Courier New, ui-monospace, monospace";
+    context.textBaseline = "top";
+
+    wrappedLines.forEach(function (line, index) {
+      var text = line.text;
+      var y = paddingY + index * lineHeight;
+      context.fillStyle = line.kind === "muted" ? muted : line.kind === "accent" ? accent : ink;
+      context.fillText(text, paddingX, y);
+    });
+
+    return canvas.toDataURL("image/png");
+  }
+
+  function normalizeReceiptLines(text) {
+    return String(text)
+      .split("\n")
+      .map(function (line) {
+        return line.trimEnd();
+      })
+      .filter(function (line, index, lines) {
+        return line || lines[index - 1];
+      });
+  }
+
+  function wrapReceiptLines(lines, context, maxWidth) {
+    var output = [];
+
+    lines.forEach(function (line) {
+      var kind = getReceiptLineKind(line);
+      var chunks = line ? wrapLine(line, context, maxWidth) : [""];
+      chunks.forEach(function (chunk) {
+        output.push({ text: chunk, kind: kind });
+      });
+    });
+
+    return output;
+  }
+
+  function wrapLine(line, context, maxWidth) {
+    var words = String(line).split("");
+    var rows = [];
+    var current = "";
+
+    words.forEach(function (char) {
+      var next = current + char;
+      if (context.measureText(next).width > maxWidth && current) {
+        rows.push(current);
+        current = char;
+      } else {
+        current = next;
+      }
+    });
+
+    if (current || !rows.length) rows.push(current);
+    return rows;
+  }
+
+  function getReceiptLineKind(line) {
+    if (/^(CODE PERSONA|SHARED CODE|NO\.|GENERATED|DURATION|FIT|UNCLEAR|SIGNATURE|PACE|CODE |STATUS|MODE|TAGS)/.test(line)) {
+      return "muted";
+    }
+    if (/^(\+|\||\[|FIT|UNCLEAR|STABLE|BOUND|PARSE|DRIVE|LINK|signature|pace|clarity|packet|receipt)/.test(line)) {
+      return "accent";
+    }
+    return "ink";
+  }
+
+  function drawTearLine(context, startX, endX, y, color) {
+    var text = "^".repeat(96);
+    context.save();
+    context.beginPath();
+    context.rect(startX, y - 4, endX - startX, 16);
+    context.clip();
+    context.fillStyle = color;
+    context.font = "14px Courier New, ui-monospace, monospace";
+    context.fillText(text, startX, y);
+    context.restore();
+  }
+
+  function showImageSavePrompt(dataUrl) {
+    closeImageSavePrompt();
+    var modal = document.createElement("div");
+    var isIos = /iphone|ipad|ipod/i.test(navigator.userAgent || "");
+    modal.className = "image-save-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.innerHTML = [
+      '<div class="image-save-panel">',
+      '<p class="receipt-kicker">RECEIPT IMAGE / 小票图片</p>',
+      '<img alt="代码人格小票图片" src="' + dataUrl + '" />',
+      '<p class="hint ok">' +
+        (isIos ? "iOS：长按图片，选择“存储到照片”。" : "长按图片保存到相册。") +
+        "</p>",
+      '<button class="text-button" type="button" data-action="close-image">close</button>',
+      "</div>"
+    ].join("");
+    document.body.appendChild(modal);
+  }
+
+  function closeImageSavePrompt() {
+    var modal = document.querySelector(".image-save-modal");
+    if (modal) modal.remove();
+  }
+
+  function isMobileDevice() {
+    return /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "") || window.innerWidth < 720;
   }
 
   function buildShareText() {
@@ -1218,8 +1524,7 @@
     var extras = getPersonaExtras(result.persona.code);
     var generatedAt = state.finishedAt || Date.now();
     var durationMs = Math.max(0, generatedAt - (state.startedAt || generatedAt));
-    var url = buildResultUrl(result.persona.code);
-    var signature = buildAnswerSignature(result);
+    var signature = getReceiptSignature();
 
     return [
       "Code Persona Test",
@@ -1231,10 +1536,8 @@
       "signature: " + signature,
       "pace: " + getPaceLabel(durationMs),
       "clarity: " + getClarityLabel(result.answerStats),
-      result.persona.summary,
-      extras.motto,
+      mergeMotto(result.persona.summary, extras.motto),
       "tags: " + extras.tags.join(" / "),
-      "link: " + url,
       "",
       formatReceiptBars(result.raw, result.match, result.answerStats)
     ].join("\n");
@@ -1246,10 +1549,8 @@
       "Code Persona Test",
       persona.code + " " + persona.status + " - " + persona.name,
       persona.face,
-      persona.summary,
-      extras.motto,
-      "tags: " + extras.tags.join(" / "),
-      "link: " + buildResultUrl(persona.code)
+      mergeMotto(persona.summary, extras.motto),
+      "tags: " + extras.tags.join(" / ")
     ].join("\n");
   }
 
@@ -1289,6 +1590,14 @@
 
   document.addEventListener("keydown", function (event) {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (/^(input|textarea|select)$/i.test(event.target.tagName || "")) {
+      if (event.key === "Enter" && state.mode === "intro") {
+        event.preventDefault();
+        startTest();
+        render();
+      }
+      return;
+    }
     var key = normalizeKey(event.key);
     if (!key) return;
     event.preventDefault();
@@ -1316,6 +1625,10 @@
 
     var actionButton = event.target.closest("[data-action]");
     var action = actionButton ? actionButton.getAttribute("data-action") : "";
+    if (action === "start-test") {
+      startTest();
+      render();
+    }
     if (action === "restart") {
       restart();
       render();
@@ -1346,21 +1659,13 @@
     if (action === "copy-shared") {
       copySharedResult();
     }
-    if (action === "link") {
-      copyResultLink();
-    }
     if (action === "share") {
       shareResult();
-    }
-    if (action === "save") {
-      saveResultText();
-    }
-    if (action === "print") {
-      printReceipt();
     }
   });
 
   function updateKeypadState() {
+    keypad.classList.toggle("is-hidden", state.mode !== "quiz");
     Array.prototype.forEach.call(keypad.querySelectorAll("button[data-key]"), function (button) {
       var key = button.getAttribute("data-key");
       button.classList.toggle("is-active", state.mode === "quiz" && key === state.buffer);
@@ -1369,6 +1674,12 @@
   }
 
   document.addEventListener("click", function (event) {
+    var closeButton = event.target.closest('[data-action="close-image"]');
+    if (closeButton) {
+      closeImageSavePrompt();
+      return;
+    }
+
     var button = event.target.closest('[data-action="theme"]');
     if (!button) return;
     toggleTheme();
@@ -1393,9 +1704,9 @@
   }
 
   try {
-    applyTheme(localStorage.getItem("code-persona-theme") || "light");
+    applyTheme(localStorage.getItem("code-persona-theme") || "dark");
   } catch (error) {
-    applyTheme("light");
+    applyTheme("dark");
   }
 
   window.addEventListener("hashchange", function () {

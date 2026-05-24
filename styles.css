@@ -68,6 +68,13 @@ input {
   border-bottom: 1px solid var(--line);
 }
 
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .brand {
   color: var(--ink);
   text-decoration: none;
@@ -80,6 +87,7 @@ input {
   text-underline-offset: 3px;
 }
 
+.nav-link,
 .theme-toggle {
   min-height: 32px;
   padding: 3px 10px;
@@ -88,9 +96,12 @@ input {
   background: transparent;
   color: var(--ink);
   cursor: pointer;
+  text-decoration: none;
   text-transform: lowercase;
 }
 
+.nav-link:hover,
+.nav-link:focus-visible,
 .theme-toggle:hover,
 .theme-toggle:focus-visible {
   background: var(--ink);
@@ -144,16 +155,48 @@ input {
   margin: 10px 0 18px;
 }
 
-.progress {
+.quiz-meta {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 18px;
   color: var(--muted);
   font-size: 14px;
+  line-height: 1.5;
+}
+
+.quiz-meta p {
+  margin: 0;
+}
+
+.meta-label {
+  font-weight: 700;
+}
+
+.meta-name {
+  color: var(--accent-2);
+}
+
+.meta-status {
+  color: var(--accent-2);
+}
+
+.meta-question {
+  color: var(--accent-2);
 }
 
 .progress-bar {
-  margin: 4px 0 18px;
   color: var(--accent-2);
   font-size: 13px;
-  line-height: 1.2;
+  line-height: 1;
+  white-space: pre;
+}
+
+.spinner::before {
+  display: inline-block;
+  width: 1.25ch;
+  color: var(--accent-2);
+  content: "⠋";
+  animation: spinner-cycle 0.78s steps(10, end) infinite;
 }
 
 .options {
@@ -202,6 +245,21 @@ input {
   font-weight: 700;
 }
 
+.option-text {
+  min-width: 0;
+}
+
+[data-stream-text].is-streaming::after {
+  display: inline-block;
+  width: 0.58em;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.14em;
+  background: var(--ink);
+  content: "";
+  animation: cursor-blink 0.82s linear infinite;
+}
+
 .cursor {
   display: inline-block;
   width: 0.62em;
@@ -225,8 +283,78 @@ input {
   }
 }
 
+@keyframes spinner-cycle {
+  0% {
+    content: "⠋";
+  }
+  10% {
+    content: "⠙";
+  }
+  20% {
+    content: "⠹";
+  }
+  30% {
+    content: "⠸";
+  }
+  40% {
+    content: "⠼";
+  }
+  50% {
+    content: "⠴";
+  }
+  60% {
+    content: "⠦";
+  }
+  70% {
+    content: "⠧";
+  }
+  80% {
+    content: "⠇";
+  }
+  90%,
+  100% {
+    content: "⠏";
+  }
+}
+
 .input-line {
   margin: 20px 0 8px;
+}
+
+.input-marker {
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
+.name-line {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  margin: 10px 0 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--soft);
+}
+
+.name-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  outline: none;
+}
+
+.name-input:focus {
+  outline: none;
+}
+
+.name-line:focus-within {
+  border-color: var(--accent-2);
 }
 
 .hint {
@@ -350,12 +478,13 @@ input {
 .receipt-paper::before,
 .receipt-paper::after {
   display: block;
+  width: 100%;
   overflow: hidden;
   color: var(--line);
   font-size: 12px;
   line-height: 1;
   white-space: nowrap;
-  content: "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^";
+  content: "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^";
 }
 
 .receipt-paper::before {
@@ -500,6 +629,40 @@ input {
   outline: none;
 }
 
+.image-save-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+}
+
+.image-save-panel {
+  width: min(100%, 420px);
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  box-shadow: 0 16px 50px var(--shadow);
+}
+
+.image-save-panel img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 0 12px;
+  border: 1px solid var(--line);
+}
+
+.image-save-panel .text-button {
+  width: 100%;
+  margin-top: 12px;
+}
+
 .keypad {
   position: fixed;
   left: 50%;
@@ -556,6 +719,10 @@ input {
   background: var(--accent);
 }
 
+.keypad.is-hidden {
+  display: none;
+}
+
 @media (min-width: 760px) {
   body {
     padding-top: 52px;
@@ -574,6 +741,10 @@ input {
   body {
     padding: 22px 14px 132px;
     font-size: 15px;
+  }
+
+  .site-head {
+    align-items: flex-start;
   }
 
   .screen {
@@ -601,6 +772,8 @@ input {
 
 @media (prefers-reduced-motion: reduce) {
   .cursor,
+  .spinner::before,
+  [data-stream-text].is-streaming::after,
   .printer-dots::after {
     animation: none;
   }
@@ -626,6 +799,7 @@ input {
   .ascii,
   .keypad,
   .actions,
+  .image-save-modal,
   .hint {
     display: none;
   }
