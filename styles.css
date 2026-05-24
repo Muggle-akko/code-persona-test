@@ -149,6 +149,13 @@ input {
   font-size: 14px;
 }
 
+.progress-bar {
+  margin: 4px 0 18px;
+  color: var(--accent-2);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
 .options {
   display: grid;
   gap: 10px;
@@ -160,12 +167,34 @@ input {
   grid-template-columns: 34px minmax(0, 1fr);
   gap: 10px;
   align-items: start;
+  width: 100%;
   padding: 9px 0;
+  border: 0;
   border-bottom: 1px dotted var(--line);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  line-height: inherit;
+  text-align: left;
+}
+
+.option:hover,
+.option:focus-visible {
+  color: var(--accent);
+  outline: none;
 }
 
 .option.is-picked {
   color: var(--accent);
+}
+
+.option.is-uncertain {
+  color: var(--muted);
+}
+
+.option.is-uncertain.is-picked {
+  color: var(--accent-2);
 }
 
 .letter {
@@ -206,6 +235,39 @@ input {
   font-size: 14px;
 }
 
+.last-receipt {
+  margin: 18px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px dotted var(--line);
+}
+
+.mini-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.line-button {
+  min-height: 30px;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 13px;
+  text-transform: lowercase;
+}
+
+.line-button:hover,
+.line-button:focus-visible {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  outline: none;
+}
+
 .result-title {
   margin: 0 0 14px;
   font-size: 22px;
@@ -236,6 +298,38 @@ input {
   text-transform: uppercase;
 }
 
+.printer-block {
+  min-height: 300px;
+}
+
+.printer-art {
+  overflow-x: auto;
+  margin: 24px 0 20px;
+  color: var(--accent-2);
+  font-size: 14px;
+  line-height: 1.2;
+  white-space: pre;
+}
+
+.printer-dots::after {
+  display: inline-block;
+  width: 3ch;
+  overflow: hidden;
+  vertical-align: bottom;
+  content: "...";
+  animation: dot-cycle 1s steps(4, end) infinite;
+}
+
+@keyframes dot-cycle {
+  0% {
+    width: 0;
+  }
+
+  100% {
+    width: 3ch;
+  }
+}
+
 .receipt-paper {
   position: relative;
   width: min(100%, 540px);
@@ -245,6 +339,7 @@ input {
   background: color-mix(in srgb, var(--bg) 86%, white);
   box-shadow: 0 8px 28px var(--shadow);
   font-family: var(--receipt);
+  font-variant-numeric: tabular-nums;
   line-height: 1.45;
 }
 
@@ -300,6 +395,18 @@ input {
   white-space: pre;
 }
 
+.receipt-stamp {
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto 14px;
+  padding: 3px 8px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 11px;
+  text-align: center;
+  transform: rotate(-1deg);
+}
+
 .receipt-facts {
   display: grid;
   gap: 3px;
@@ -324,12 +431,14 @@ input {
 .receipt-facts dt {
   color: var(--muted);
   font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 .receipt-facts dd {
   color: var(--ink);
   font-size: 13px;
   text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .visualizer {
@@ -345,9 +454,30 @@ input {
   white-space: pre;
 }
 
-.actions {
+.receipt-tags {
   display: flex;
   flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.receipt-tags span {
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  color: var(--accent-2);
+  font-size: 12px;
+}
+
+.receipt-footer {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
   gap: 10px;
   margin-top: 22px;
 }
@@ -360,6 +490,7 @@ input {
   background: transparent;
   color: var(--ink);
   cursor: pointer;
+  text-align: center;
 }
 
 .text-button:hover,
@@ -400,6 +531,16 @@ input {
 .keypad button[data-key="enter"] {
   color: var(--bg);
   background: var(--ink);
+}
+
+.keypad button.is-active {
+  border-color: var(--accent);
+  color: var(--bg);
+  background: var(--accent);
+}
+
+.keypad button.is-muted {
+  opacity: 0.55;
 }
 
 .keypad button:hover,
@@ -451,5 +592,57 @@ input {
 
   .keypad button {
     min-height: 44px;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor,
+  .printer-dots::after {
+    animation: none;
+  }
+}
+
+@media print {
+  :root {
+    --bg: #ffffff;
+    --ink: #000000;
+    --muted: #444444;
+    --line: #000000;
+    --accent: #000000;
+    --accent-2: #000000;
+    --shadow: transparent;
+  }
+
+  body {
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .site-head,
+  .ascii,
+  .keypad,
+  .actions,
+  .hint {
+    display: none;
+  }
+
+  .shell {
+    width: 100%;
+    margin: 0;
+  }
+
+  .screen {
+    min-height: 0;
+  }
+
+  .receipt-paper {
+    width: 72mm;
+    margin: 0 auto;
+    border: 0;
+    box-shadow: none;
   }
 }
