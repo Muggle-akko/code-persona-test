@@ -1,3 +1,27 @@
+@font-face {
+  font-family: "Code Persona Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Code Persona Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./assets/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Code Persona SC";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/NotoSansSC-Regular.otf") format("opentype");
+}
+
 :root {
   color-scheme: light;
   --bg: #fdfcf7;
@@ -9,9 +33,10 @@
   --soft: #f5f1e8;
   --warn: #8b3d22;
   --shadow: rgba(35, 31, 24, 0.08);
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
-  --receipt: "Courier New", "Lucida Console", "Roboto Mono", monospace;
+  --mono: "Code Persona Mono", "Code Persona SC", ui-monospace, SFMono-Regular,
+    Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --receipt: "Code Persona Mono", "Code Persona SC", "Courier New", "Lucida Console",
+    monospace;
 }
 
 :root[data-theme="dark"] {
@@ -33,13 +58,19 @@
 
 html {
   min-height: 100%;
+  max-width: 100%;
   background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   margin: 0;
   padding: 32px 18px 132px;
+  overscroll-behavior-x: none;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--mono);
@@ -53,8 +84,15 @@ input {
   font: inherit;
 }
 
+a,
+button,
+input {
+  touch-action: manipulation;
+}
+
 .shell {
   width: min(100%, 680px);
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -62,7 +100,8 @@ input {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: clamp(6px, 2.4vw, 16px);
+  min-width: 0;
   margin-bottom: 28px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--line);
@@ -70,15 +109,21 @@ input {
 
 .site-nav {
   display: flex;
-  flex-wrap: wrap;
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
   justify-content: flex-end;
-  gap: 8px;
+  gap: clamp(4px, 1.5vw, 8px);
+  min-width: 0;
 }
 
 .brand {
+  flex: 1 1 auto;
+  min-width: 0;
   color: var(--ink);
+  font-size: clamp(10px, 3.4vw, 16px);
   text-decoration: none;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .brand:hover {
@@ -89,15 +134,21 @@ input {
 
 .nav-link,
 .theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 32px;
-  padding: 3px 10px;
+  padding: 0 clamp(5px, 1.8vw, 10px);
   border: 1px solid var(--ink);
   border-radius: 4px;
   background: transparent;
   color: var(--ink);
   cursor: pointer;
+  font-size: clamp(10px, 3vw, 16px);
+  line-height: 1;
   text-decoration: none;
   text-transform: lowercase;
+  white-space: nowrap;
 }
 
 .nav-link:hover,
@@ -114,10 +165,10 @@ input {
 }
 
 .ascii {
-  overflow: auto;
+  overflow: hidden;
   margin: 0 0 26px;
   color: var(--accent-2);
-  font-size: clamp(11px, 2.7vw, 14px);
+  font-size: clamp(9px, 2.65vw, 14px);
   line-height: 1.2;
   white-space: pre;
 }
@@ -431,10 +482,10 @@ input {
 }
 
 .printer-art {
-  overflow-x: auto;
+  overflow: hidden;
   margin: 24px 0 20px;
   color: var(--accent-2);
-  font-size: 14px;
+  font-size: clamp(10px, 3vw, 14px);
   line-height: 1.2;
   white-space: pre;
 }
@@ -471,6 +522,17 @@ input {
   line-height: 1.45;
 }
 
+.receipt-paper,
+.receipt-paper * {
+  scrollbar-width: none;
+}
+
+.receipt-paper *::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 :root[data-theme="dark"] .receipt-paper {
   background: color-mix(in srgb, var(--bg) 90%, white 4%);
 }
@@ -504,10 +566,10 @@ input {
 }
 
 .receipt-code {
-  overflow-x: auto;
+  overflow: hidden;
   margin: 0 auto 10px;
   color: var(--ink);
-  font-size: clamp(16px, 4.8vw, 25px);
+  font-size: clamp(13px, 4.6vw, 25px);
   font-weight: 700;
   line-height: 1.08;
   text-align: center;
@@ -515,10 +577,10 @@ input {
 }
 
 .receipt-face {
-  overflow-x: auto;
+  overflow: hidden;
   margin: 0 0 10px;
   color: var(--accent-2);
-  font-size: clamp(15px, 4.4vw, 22px);
+  font-size: clamp(12px, 4.2vw, 22px);
   line-height: 1.1;
   text-align: center;
   white-space: pre;
@@ -571,7 +633,7 @@ input {
 }
 
 .visualizer {
-  overflow-x: auto;
+  overflow: hidden;
   margin: 8px 0 0;
   padding: 10px 0;
   border-top: 1px dashed var(--line);
@@ -634,16 +696,18 @@ input {
   inset: 0;
   z-index: 20;
   display: grid;
-  place-items: center;
+  align-items: start;
+  justify-items: center;
+  overflow-y: auto;
   padding: 18px;
   background: color-mix(in srgb, var(--bg) 72%, transparent);
+  -webkit-overflow-scrolling: touch;
 }
 
 .image-save-panel {
   width: min(100%, 420px);
-  max-height: calc(100vh - 36px);
-  overflow: auto;
-  padding: 14px;
+  overflow: visible;
+  padding: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--bg);
@@ -655,7 +719,6 @@ input {
   width: 100%;
   height: auto;
   margin: 0 0 12px;
-  border: 1px solid var(--line);
 }
 
 .image-save-panel .text-button {
@@ -669,7 +732,7 @@ input {
   bottom: 16px;
   z-index: 10;
   display: grid;
-  width: min(calc(100% - 28px), 680px);
+  width: min(calc(100% - 24px), 680px);
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   padding: 10px;
@@ -739,12 +802,13 @@ input {
 
 @media (max-width: 520px) {
   body {
-    padding: 22px 14px 132px;
+    padding: 20px 16px 132px;
     font-size: 15px;
   }
 
   .site-head {
-    align-items: flex-start;
+    align-items: center;
+    margin-bottom: 24px;
   }
 
   .screen {
@@ -767,6 +831,34 @@ input {
 
   .actions {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .site-head {
+    gap: 4px;
+  }
+
+  .site-nav {
+    gap: 3px;
+  }
+
+  .brand,
+  .nav-link,
+  .theme-toggle {
+    font-size: 9.5px;
+  }
+
+  .nav-link,
+  .theme-toggle {
+    min-height: 29px;
+    padding-right: 4px;
+    padding-left: 4px;
   }
 }
 
