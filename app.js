@@ -203,32 +203,32 @@
   ];
 
   var personas = [
-    p("200", "OK", "守约可靠型", "你是那种约会从不迟到、遇到危机能抗事的人。别人喜欢把重任委托给你，而你总能完美交出答卷。", "可靠、负责、守约，擅长把混乱的局面收拾得条条有理。", "小心把可靠变成自动接单，偶尔也要让别人学会自己解决麻烦。", "H,H,H,M,M,M,H,M,M,M,L,H,L,M,M", "[ OK ]\n(｀・ω・´)ゝ"),
-    p("201", "Created", "天马行空型", "你的快乐常出现在“不如我们做一个这样的”之后。空白不会吓退你，反而像一张等你开头的便签。", "想象力丰富、鬼点子多、思维跳跃。", "想法是最不值钱的东西，别让灵感变成未来自己的待办。", "M,M,M,M,M,M,M,H,M,H,M,H,M,M,H", "+ new +\n(＾▽＾)つ□"),
-    p("204", "No Content", "沉默寡言型", "你不喜欢发表自己的观点，信奉少即是多，没必要浪费自己的能量在无意义的事情上", "克制、冷静、理性，别人永远觉得你最捉摸不透。", "等到念旧的年龄回头看，会不会担心找不到自己在时光中留下过的痕迹。", "H,H,H,H,H,L,M,M,L,L,L,H,L,L,L", "...\n( -_-)"),
-    p("301", "Moved Permanently", "长期迁移型", "你很擅长和旧版本的自己和平告别。只要新路径更合理，你愿意慢慢整理、搬家、步履不停。", "断舍离、重构、长期规划、把灵魂迁移到更合适的位置。", "别把每个小问题都升级成大型搬迁，有些东西擦一擦灰尘也能继续用。", "M,H,M,H,M,M,H,H,H,M,H,M,M,H,M", "old -> new\n(｀へ´)>"),
-    p("302", "Found", "临时重定向型", "你很擅长在混乱现场中找到那座隐藏的安全岛。计划有变也不慌，你的救场能力通常能将局面导向正轨。", "灵活、随机应变、临场能力强，请导播在这一刻给你放三到五分钟的广告。", "小心临时方案用太多变成默认路线，记得回头确认真正的目的地。", "M,M,H,M,M,M,H,M,H,M,M,H,H,H,M", "go -> ?\n( ＾_＾)つ"),
-    p("304", "Not Modified", "保守型", "你珍惜好用的旧方法。不是不进步，是你知道稳定经验也是一种资产。", "保守、节约、求稳，讨厌为了新鲜而新鲜。", "缓存太久会错过更新，偶尔也要刷新一下页面，不要和世界脱轨。", "H,H,H,H,M,L,M,M,L,L,L,M,L,L,L", "[cached]\n(￣ー￣)"),
-    p("400", "Bad Request", "高敏纠错型", "你对含糊、敷衍和暗语有天然雷达。别人觉得没问题、差不多，你已经看到后面会怎么翻车。", "敏锐、洞察力强、总能发现事情的盲点，帮大家少走弯路。", "别让每一次洞察都变成你的内耗，有些问题可以自己避雷，没必要非去说服迟钝的人", "M,M,M,H,M,H,H,M,L,L,M,M,M,M,M", "???\n(눈_눈)"),
-    p("401", "Unauthorized", "权限边界型", "你的私人边界自带门禁。熟归熟，规则归规则，亲密也不等于无底线。", "边界感、守规则，能保护自己和重要关系不被透支。", "有时可以解释一下“为什么不行”，世界会少误会你一点。", "H,H,M,H,H,M,M,M,L,L,L,M,L,M,L", "[locked]\n(｀_´)ゞ"),
-    p("402", "Payment Required", "成本核算型", "你脑内常驻一个小算盘，算的不是吝啬，而是时间、精力、金钱和情绪值。", "会判断投入产出，知道哪些事值得花精力，哪些只是短期看起来划算实际以后是个雷。", "别让计算成本盖过真正值得投入的关系和体验。", "M,H,H,H,H,M,H,M,M,M,M,M,M,M,M", "$ _ $\n(¬‿¬)"),
-    p("403", "Forbidden", "拒绝型", "你的底线不容侵犯，不喜欢就算不喜欢，不愿意就是不愿意。", "强势，勇敢、关键时刻敢说不，能替场面踩住刹车。", "不要把“拒绝”当成价值感来源，避免把“我不在乎别人”当成”我很酷“的想法", "M,H,H,H,H,H,M,M,L,L,M,M,L,M,H", "NO.\n(￣^￣)"),
-    p("404", "Not Found", "路痴型", "你常常走着走着就打开了支线任务。迷路对你来说不是失败，只是刚好开拓未知领域。", "探索、联想、在未知里找线索，能发现别人没注意的桃花源。", "记得隔一段时间确认自己到底在找什么，不然容易掉进死胡同无法回城。", "L,M,M,L,L,L,M,H,H,M,M,L,H,L,H", "where?\n(・_・?)"),
-    p("408", "Request Timeout", "慢热延迟型", "你不是没反应，只是在思考。给你一点处理时间，你会返回一个比抢答更稳的答案。", "深思、谨慎、遇到复杂的事往往不会马上下结论。", "要学会发出“reconnecting”的信号，不然别人会以为连接断了。", "M,M,L,M,M,L,M,H,H,L,M,L,H,L,M", "wait...\n( _ _ )"),
-    p("409", "Conflict", "冲突协调型", "你能听见表面吵架下面真正卡住的地方。你不怕分歧，怕的是大家各说各话。", "拆冲突、找共同目标、把混在一起的问题分开。", "别把所有矛盾都背到自己身上，有些冲突不是你负责修复的。", "M,H,M,H,M,H,H,H,M,M,M,M,H,H,M", "><\n(ง'̀-'́)ง"),
-    p("422", "Unprocessable Content", "深度解析型", "你不是挑刺，你是真的消化不了不合理。看懂之后还不对，这才最让你难受。", "理解深、追问准，能看出漂亮话下面的结构问题。", "有时先给一个能走的小版本，比把所有逻辑一次理顺更有用。", "M,M,M,H,M,M,H,H,L,L,H,M,M,M,M", "[parse]\n(¬_¬ )"),
-    p("429", "Too Many Requests", "过载限流型", "“都别急，做完你的做你的”，你能力很强能处理很多，但是需求太多了根本做不完。", "高吞吐、会排队、能识别过载，适合处理复杂但可分批的事。", "不要等到快崩了才宣布限流，提前说清楚会更轻松。", "H,M,L,M,M,M,H,M,L,M,M,H,H,M,M", "!!!\n(×_×)"),
-    p("500", "Internal Server Error", "内耗高压型", "你脑内算力很猛，压力大时也可能突然乱码。外面看是平静，里面已经开了十几个进程。", "能量强、理解深、推进猛，适合解决高复杂问题。", "请给自己日志、降级和休息机制，不要靠硬撑当散热。", "L,M,L,L,L,H,M,H,L,H,M,H,M,L,H", "ERR\n(╯°□°)╯"),
-    p("502", "Bad Gateway", "系统中介型", "你经常夹在几方之间当翻译器。别人看到卡顿，你看到的是上下游都没对上频道。", "转译、协调、连接复杂关系，能把不同频道的人拉到同一页。", "不要把所有上游和下游的问题都算成自己的失败。", "M,M,L,M,M,M,H,H,M,L,L,M,H,H,M", "A -> ? -> B\n(・_・)ノ"),
-    p("503", "Service Unavailable", "能量维护型", "你需要维护窗口，而且这很合理。暂停不是摆烂，是为了之后还能稳定营业。", "知道自己需要恢复，会保护核心资源，不轻易把自己烧干。", "要提前公告维护时间，不要等到彻底离线才消失。", "M,H,L,H,H,L,M,M,H,L,L,L,L,M,M", "offline\n(￣o￣) zzZ"),
-    p("504", "Gateway Timeout", "等待断联型", "你常常被别人的未读、未确认、未回复拖住。不是你没做，是关键回应一直没回来。", "耐心、依赖管理、能感知链路阻塞。", "该超时就超时，该换路就换路，别把人生挂在一个加载圈上。", "M,M,L,M,M,L,M,M,H,L,L,L,H,M,L", "still...\n(・-・)")
+    p("200", "OK", "守约可靠型", "你是那种约会从不迟到、遇到危机能抗事的人。别人喜欢把重任委托给你，而你总能完美交出答卷。你可以可靠，但不必全天候在线。", "可靠、负责、守约，擅长把混乱的局面收拾得条条有理。", "小心把可靠变成自动接单，偶尔也要让别人学会自己解决麻烦。", "H,H,H,M,M,M,H,M,M,M,L,H,L,M,M", "[ OK ]\n(｀・ω・´)ゝ"),
+    p("201", "Created", "天马行空型", "你的快乐常出现在“不如我们做一个这样的”之后。空白不会吓退你，反而像一张等你开头的便签。灵感很好，记得给未来的自己留说明书。", "想象力丰富、鬼点子多、思维跳跃。", "想法是最不值钱的东西，别让灵感变成未来自己的待办。", "M,M,M,M,M,M,M,H,M,H,M,H,M,M,H", "+ new +\n(＾▽＾)つ□"),
+    p("204", "No Content", "沉默寡言型", "你不喜欢发表自己的观点，信奉少即是多，没必要浪费自己的能量在无意义的事情上。沉默很酷，偶尔回个“收到”也很酷。", "克制、冷静、理性，别人永远觉得你最捉摸不透。", "等到念旧的年龄回头看，会不会担心找不到自己在时光中留下过的痕迹。", "H,H,H,H,H,L,M,M,L,L,L,H,L,L,L", "...\n( -_-)"),
+    p("301", "Moved Permanently", "长期迁移型", "你很擅长和旧版本的自己和平告别。只要新路径更合理，你愿意慢慢整理、搬家、步履不停。换路不是背叛旧路，是给自己更合适的出口。", "断舍离、重构、长期规划、把灵魂迁移到更合适的位置。", "别把每个小问题都升级成大型搬迁，有些东西擦一擦灰尘也能继续用。", "M,H,M,H,M,M,H,H,H,M,H,M,M,H,M", "old -> new\n(｀へ´)>"),
+    p("302", "Found", "临时重定向型", "你很擅长在混乱现场中找到那座隐藏的安全岛。计划有变也不慌，你的救场能力通常能将局面导向正轨。能绕开堵点是能力，记得别把临时路牌钉成永久门牌。", "灵活、随机应变、临场能力强，请导播在这一刻给你放三到五分钟的广告。", "小心临时方案用太多变成默认路线，记得回头确认真正的目的地。", "M,M,H,M,M,M,H,M,H,M,M,H,H,H,M", "go -> ?\n( ＾_＾)つ"),
+    p("304", "Not Modified", "保守型", "你珍惜好用的旧方法。不是不进步，是你知道稳定经验也是一种资产。旧方法能用，但别忘了偶尔刷新。", "保守、节约、求稳，讨厌为了新鲜而新鲜。", "缓存太久会错过更新，偶尔也要刷新一下页面，不要和世界脱轨。", "H,H,H,H,M,L,M,M,L,L,L,M,L,L,L", "[cached]\n(￣ー￣)"),
+    p("400", "Bad Request", "高敏纠错型", "你对含糊、敷衍和暗语有天然雷达。别人觉得没问题、差不多，你已经看到后面会怎么翻车。你不是难搞，你是在保护大家不要集体翻车。", "敏锐、洞察力强、总能发现事情的盲点，帮大家少走弯路。", "别让每一次洞察都变成你的内耗，有些问题可以自己避雷，没必要非去说服迟钝的人", "M,M,M,H,M,H,H,M,L,L,M,M,M,M,M", "???\n(눈_눈)"),
+    p("401", "Unauthorized", "权限边界型", "你的私人边界自带门禁。熟归熟，规则归规则，亲密也不等于无底线。边界感不是冷漠，是认真对待彼此。", "边界感、守规则，能保护自己和重要关系不被透支。", "有时可以解释一下“为什么不行”，世界会少误会你一点。", "H,H,M,H,H,M,M,M,L,L,L,M,L,M,L", "[locked]\n(｀_´)ゞ"),
+    p("402", "Payment Required", "成本核算型", "你脑内常驻一个小算盘，算的不是吝啬，而是时间、精力、金钱和情绪值。你的精力也很贵，记得把自己算进成本。", "会判断投入产出，知道哪些事值得花精力，哪些只是短期看起来划算实际以后是个雷。", "别让计算成本盖过真正值得投入的关系和体验。", "M,H,H,H,H,M,H,M,M,M,M,M,M,M,M", "$ _ $\n(¬‿¬)"),
+    p("403", "Forbidden", "拒绝型", "你的底线不容侵犯，不喜欢就算不喜欢，不愿意就是不愿意。拒绝可以很坚定，也可以很温柔。", "强势，勇敢、关键时刻敢说不，能替场面踩住刹车。", "不要把“拒绝”当成价值感来源，避免把“我不在乎别人”当成”我很酷“的想法", "M,H,H,H,H,H,M,M,L,L,M,M,L,M,H", "NO.\n(￣^￣)"),
+    p("404", "Not Found", "路痴型", "你常常走着走着就打开了支线任务。迷路对你来说不是失败，只是刚好开拓未知领域。迷路时别急着自责，你可能正在发现新入口。", "探索、联想、在未知里找线索，能发现别人没注意的桃花源。", "记得隔一段时间确认自己到底在找什么，不然容易掉进死胡同无法回城。", "L,M,M,L,L,L,M,H,H,M,M,L,H,L,H", "where?\n(・_・?)"),
+    p("408", "Request Timeout", "慢热延迟型", "你不是没反应，只是在思考。给你一点处理时间，你会返回一个比抢答更稳的答案。慢一点没关系，记得告诉别人你还在。", "深思、谨慎、遇到复杂的事往往不会马上下结论。", "要学会发出“reconnecting”的信号，不然别人会以为连接断了。", "M,M,L,M,M,L,M,H,H,L,M,L,H,L,M", "wait...\n( _ _ )"),
+    p("409", "Conflict", "冲突协调型", "你能听见表面吵架下面真正卡住的地方。你不怕分歧，怕的是大家各说各话。不是所有矛盾都需要你亲手修好。", "拆冲突、找共同目标、把混在一起的问题分开。", "别把所有矛盾都背到自己身上，有些冲突不是你负责修复的。", "M,H,M,H,M,H,H,H,M,M,M,M,H,H,M", "><\n(ง'̀-'́)ง"),
+    p("422", "Unprocessable Content", "深度解析型", "你不是挑刺，你是真的消化不了不合理。看懂之后还不对，这才最让你难受。看出不合理很珍贵，先落一小步也很珍贵。", "理解深、追问准，能看出漂亮话下面的结构问题。", "有时先给一个能走的小版本，比把所有逻辑一次理顺更有用。", "M,M,M,H,M,M,H,H,L,L,H,M,M,M,M", "[parse]\n(¬_¬ )"),
+    p("429", "Too Many Requests", "过载限流型", "“都别急，做完你的做你的”，你能力很强能处理很多，但是需求太多了根本做不完。你不是不行，你只是不能无限并发。", "高吞吐、会排队、能识别过载，适合处理复杂但可分批的事。", "不要等到快崩了才宣布限流，提前说清楚会更轻松。", "H,M,L,M,M,M,H,M,L,M,M,H,H,M,M", "!!!\n(×_×)"),
+    p("500", "Internal Server Error", "内耗高压型", "你脑内算力很猛，压力大时也可能突然乱码。外面看是平静，里面已经开了十几个进程。高能大脑也需要散热片。", "能量强、理解深、推进猛，适合解决高复杂问题。", "请给自己日志、降级和休息机制，不要靠硬撑当散热。", "L,M,L,L,L,H,M,H,L,H,M,H,M,L,H", "ERR\n(╯°□°)╯"),
+    p("502", "Bad Gateway", "系统中介型", "你经常夹在几方之间当翻译器。别人看到卡顿，你看到的是上下游都没对上频道。你可以当桥，但不必替两岸负责。", "转译、协调、连接复杂关系，能把不同频道的人拉到同一页。", "不要把所有上游和下游的问题都算成自己的失败。", "M,M,L,M,M,M,H,H,M,L,L,M,H,H,M", "A -> ? -> B\n(・_・)ノ"),
+    p("503", "Service Unavailable", "能量维护型", "你需要维护窗口，而且这很合理。暂停不是摆烂，是为了之后还能稳定营业。暂停营业不是坏掉，是保养。", "知道自己需要恢复，会保护核心资源，不轻易把自己烧干。", "要提前公告维护时间，不要等到彻底离线才消失。", "M,H,L,H,H,L,M,M,H,L,L,L,L,M,M", "offline\n(￣o￣) zzZ"),
+    p("504", "Gateway Timeout", "等待断联型", "你常常被别人的未读、未确认、未回复拖住。不是你没做，是关键回应一直没回来。等不到的回复，不一定值得一直等。", "耐心、依赖管理、能感知链路阻塞。", "该超时就超时，该换路就换路，别把人生挂在一个加载圈上。", "M,M,L,M,M,L,M,M,H,L,L,L,H,M,L", "still...\n(・-・)")
   ];
 
   var hiddenPersona = {
     code: "418",
     status: "I'm a teapot",
     name: "反骨型",
-    summary: "你不喜欢按常理走，也不喜欢被定义。题目问你咖啡还是茶，你选择把自己活成茶壶。",
+    summary: "你不喜欢按常理走，也不喜欢被定义。题目问你咖啡还是茶，你选择把自己活成茶壶。如果世界无法解析你，先优雅地冒个热气。",
     strength: "跳出框架、拒绝被粗暴归类、拥有奇怪但有效的自洽。",
     caution: "偶尔也要给世界一点可解析的回答，不然大家只能围着你猜。",
     target: levelsToVector("H,M,H,L,L,H,L,H,H,H,L,M,M,L,H"),
@@ -482,7 +482,7 @@
     var result = scoreAnswers();
     var persona = result.persona;
     var extras = getPersonaExtras(persona.code);
-    var printout = formatReceiptBars(result.raw, result.match, result.answerStats);
+    var signalRows = getReceiptSignalRows(result.raw, result.match, result.answerStats);
     var generatedAt = state.finishedAt || Date.now();
     var durationMs = Math.max(0, generatedAt - (state.startedAt || generatedAt));
     var signature = getReceiptSignature();
@@ -504,16 +504,13 @@
       fact("FIT 匹配感", result.match + "%"),
       fact("UNCLEAR 不确定", result.answerStats.dCount + "/" + questions.length),
       fact("SIGNATURE 小票签名", signature),
-      fact("PACE 响应节奏", getPaceLabel(durationMs)),
       fact("TAGS 标签", extras.tags.join(" / ")),
       "</dl>",
       '<div class="result-grid">',
-      section("DIAGNOSIS 诊断", mergeMotto(persona.summary, extras.motto)),
+      section("DIAGNOSIS 诊断", persona.summary),
       section("BEST AT 擅长", persona.strength),
       section("WATCH OUT 注意", persona.caution),
-      '<div class="result-section"><h2>SIGNALS 信号</h2><pre class="visualizer">' +
-        escapeHtml(printout) +
-        "</pre></div>",
+      '<div class="result-section"><h2>SIGNALS 信号</h2>' + renderSignalBars(signalRows) + "</div>",
       "</div>",
       '<p class="receipt-footer">-- receipt sealed / 小票已封存 --</p>',
       "</article>",
@@ -542,16 +539,13 @@
       '<dl class="receipt-facts">',
       fact("CODE 人格码", persona.code),
       fact("STATUS 状态", persona.status),
-      fact("PACE 响应节奏", "opened from link / 链接打开"),
       fact("TAGS 标签", extras.tags.join(" / ")),
       "</dl>",
       '<div class="result-grid">',
-      section("DIAGNOSIS 诊断", mergeMotto(persona.summary, extras.motto)),
+      section("DIAGNOSIS 诊断", persona.summary),
       section("BEST AT 擅长", persona.strength),
       section("WATCH OUT 注意", persona.caution),
-      '<div class="result-section"><h2>SIGNALS 信号</h2><pre class="visualizer">' +
-        escapeHtml(formatPersonaSignalBars(persona)) +
-        "</pre></div>",
+      '<div class="result-section"><h2>SIGNALS 信号</h2>' + renderSignalBars(getPersonaSignalRows(persona)) + "</div>",
       "</div>",
       '<p class="receipt-footer">-- Thanks for testing / 欢迎下次再来 --</p>',
       "</article>",
@@ -581,6 +575,27 @@
       "</h2><p>" +
       escapeHtml(text) +
       "</p></div>"
+    );
+  }
+
+  function renderSignalBars(rows) {
+    return (
+      '<div class="signal-bars">' +
+      rows
+        .map(function (row) {
+          var percent = formatPercent(row[1]);
+          return [
+            '<div class="signal-row">',
+            '<span class="signal-label">' + escapeHtml(row[0]) + "</span>",
+            '<span class="signal-track" aria-hidden="true"><span class="signal-fill" style="--value:' +
+              percent +
+              '%"></span></span>',
+            '<span class="signal-percent">' + percent + "%</span>",
+            "</div>"
+          ].join("");
+        })
+        .join("") +
+      "</div>"
     );
   }
 
@@ -767,7 +782,11 @@
   }
 
   function formatReceiptBars(raw, match, answerStats) {
-    var rows = [
+    return formatSignalRowsAsText(getReceiptSignalRows(raw, match, answerStats));
+  }
+
+  function getReceiptSignalRows(raw, match, answerStats) {
+    return [
       ["FIT 匹配", match / 100],
       ["UNCLEAR 模糊", answerStats.dCount / questions.length],
       ["STABLE 稳定", normalizeGroup(raw, 0, 3)],
@@ -776,7 +795,9 @@
       ["DRIVE 行动", normalizeGroup(raw, 9, 12)],
       ["LINK 连接", normalizeGroup(raw, 12, 15)]
     ];
+  }
 
+  function formatSignalRowsAsText(rows) {
     return rows
       .map(function (row) {
         var label = row[0].padEnd(13, " ");
@@ -786,20 +807,21 @@
   }
 
   function formatPersonaSignalBars(persona) {
-    var rows = [
-      ["STABLE 稳定", normalizeTargetGroup(persona.target, 0, 3)],
-      ["BOUND 边界", normalizeTargetGroup(persona.target, 3, 6)],
-      ["PARSE 解析", normalizeTargetGroup(persona.target, 6, 9)],
-      ["DRIVE 行动", normalizeTargetGroup(persona.target, 9, 12)],
-      ["LINK 连接", normalizeTargetGroup(persona.target, 12, 15)]
-    ];
+    return formatSignalRowsAsText(getPersonaSignalRows(persona));
+  }
 
-    return rows
-      .map(function (row) {
-        var label = row[0].padEnd(13, " ");
-        return label + asciiBar(row[1]);
-      })
-      .join("\n");
+  function getPersonaSignalRows(persona) {
+    return [
+      ["STABLE 稳定性", normalizeTargetGroup(persona.target, 0, 3)],
+      ["BOUND 边界感", normalizeTargetGroup(persona.target, 3, 6)],
+      ["PARSE 理解力", normalizeTargetGroup(persona.target, 6, 9)],
+      ["DRIVE 行动力", normalizeTargetGroup(persona.target, 9, 12)],
+      ["LINK 协作力", normalizeTargetGroup(persona.target, 12, 15)]
+    ];
+  }
+
+  function formatPercent(value) {
+    return String(Math.max(0, Math.min(100, Math.round(value * 100))));
   }
 
   function formatAnswerMix(answerStats) {
@@ -824,18 +846,6 @@
   function readNameInput() {
     var input = document.getElementById("name-input");
     return normalizeUserName(input ? input.value : state.userName);
-  }
-
-  function mergeMotto(text, motto) {
-    var note = String(motto || "").replace(/^今日小纸条：/, "");
-    return note ? text + " " + note : text;
-  }
-
-  function getPaceLabel(durationMs) {
-    var seconds = Math.max(1, Math.round(durationMs / 1000));
-    if (seconds < 90) return "quick return / 快速返回";
-    if (seconds < 240) return "steady typing / 稳定输入";
-    return "slow brew / 慢慢冲泡";
   }
 
   function getClarityLabel(answerStats) {
@@ -899,33 +909,7 @@
   }
 
   function getPersonaExtras(code) {
-    var extras = {
-      "200": ["steady serving / 稳态营业", "今日小纸条：你可以可靠，但不必全天候在线。"],
-      "201": ["create first / 先做小版", "今日小纸条：灵感很好，记得给未来的自己留说明书。"],
-      "204": ["low-noise mode / 低噪音模式", "今日小纸条：沉默很酷，偶尔回个“收到”也很酷。"],
-      "301": ["steady migration / 慢慢迁移", "今日小纸条：换路不是背叛旧路，是给自己更合适的出口。"],
-      "302": ["temporary redirect / 临时改道", "今日小纸条：能绕开堵点是能力，记得别把临时路牌钉成永久门牌。"],
-      "304": ["cached reuse / 缓存复用", "今日小纸条：旧方法能用，但别忘了偶尔刷新。"],
-      "400": ["clarify input / 先澄清输入", "今日小纸条：你不是难搞，你是在保护大家不要集体翻车。"],
-      "401": ["access gate / 门禁开启", "今日小纸条：边界感不是冷漠，是认真对待彼此。"],
-      "402": ["budget first / 预算优先", "今日小纸条：你的精力也很贵，记得把自己算进成本。"],
-      "403": ["hard boundary / 原则红线", "今日小纸条：拒绝可以很坚定，也可以很温柔。"],
-      "404": ["map loading / 地图生成中", "今日小纸条：迷路时别急着自责，你可能正在发现新入口。"],
-      "408": ["delayed response / 延迟响应", "今日小纸条：慢一点没关系，记得告诉别人你还在。"],
-      "409": ["conflict diff / 冲突拆解", "今日小纸条：不是所有矛盾都需要你亲手修好。"],
-      "422": ["deep parsing / 深度解析", "今日小纸条：看出不合理很珍贵，先落一小步也很珍贵。"],
-      "429": ["rate limit / 主动限流", "今日小纸条：你不是不行，你只是不能无限并发。"],
-      "500": ["graceful fallback / 降级恢复", "今日小纸条：高能大脑也需要散热片。"],
-      "502": ["gateway translate / 频道转译", "今日小纸条：你可以当桥，但不必替两岸负责。"],
-      "503": ["maintenance window / 维护窗口", "今日小纸条：暂停营业不是坏掉，是保养。"],
-      "504": ["timeout reroute / 超时换路", "今日小纸条：等不到的回复，不一定值得一直等。"],
-      "418": ["teapot protocol / 茶壶协议", "今日小纸条：如果世界无法解析你，先优雅地冒个热气。"]
-    };
-    var pair = extras[code] || extras["418"];
-
     return {
-      mode: pair[0],
-      motto: pair[1],
       tags: getPersonaTags(code)
     };
   }
@@ -1294,13 +1278,17 @@
   }
 
   async function buildReceiptImage(receipt) {
+    await waitForFonts();
+
     var rect = receipt.getBoundingClientRect();
     var exportPadding = 0;
-    var scale = 2;
+    var scale = Math.min(4, Math.max(3, window.devicePixelRatio || 2));
     var receiptWidth = Math.ceil(rect.width);
     var receiptHeight = Math.ceil(receipt.scrollHeight || rect.height);
     var width = receiptWidth + exportPadding * 2;
     var height = receiptHeight + exportPadding * 2;
+    var outputWidth = Math.ceil(width * scale);
+    var outputHeight = Math.ceil(height * scale);
     var clone = receipt.cloneNode(true);
     var css = buildReceiptExportCss(width, receiptWidth);
 
@@ -1318,9 +1306,9 @@
     ].join("");
     var svg = [
       '<svg xmlns="http://www.w3.org/2000/svg" width="' +
-        width +
+        outputWidth +
         '" height="' +
-        height +
+        outputHeight +
         '" viewBox="0 0 ' +
         width +
         " " +
@@ -1332,12 +1320,22 @@
       "</svg>"
     ].join("");
 
-    return svgToPng(svg, width, height, scale);
+    return svgToPng(svg, outputWidth, outputHeight);
+  }
+
+  function waitForFonts() {
+    if (!document.fonts || !document.fonts.ready) {
+      return Promise.resolve();
+    }
+
+    return document.fonts.ready.catch(function () {
+      return null;
+    });
   }
 
   function buildReceiptExportCss(width, receiptWidth) {
     var rootStyle = window.getComputedStyle(document.documentElement);
-    var variableNames = ["--bg", "--ink", "--muted", "--line", "--accent", "--accent-2", "--soft", "--warn", "--shadow", "--mono", "--receipt"];
+    var variableNames = ["--bg", "--ink", "--muted", "--line", "--accent", "--accent-2", "--soft", "--receipt-bg", "--warn", "--shadow", "--mono", "--receipt"];
     var variables = variableNames
       .map(function (name) {
         return name + ":" + rootStyle.getPropertyValue(name) + ";";
@@ -1351,11 +1349,11 @@
       "}",
       collectPageCss(),
       ".receipt-export-root{",
-      "box-sizing:border-box;width:" + width + "px;min-height:100%;padding:0;background:var(--bg);color:var(--ink);",
+      "box-sizing:border-box;width:" + width + "px;min-height:100%;padding:0;background:var(--receipt-bg);color:var(--ink);",
       "font-family:var(--mono);font-size:16px;line-height:1.62;letter-spacing:0;",
       "}",
       ".receipt-export-root .receipt-paper{",
-      "width:" + receiptWidth + "px;max-width:none;margin:0;box-shadow:none;",
+      "width:" + receiptWidth + "px;max-width:none;margin:0;box-shadow:none;background:var(--receipt-bg)!important;",
       "}",
       ".receipt-export-root .actions,.receipt-export-root .hint{display:none;}",
       ".receipt-export-root,.receipt-export-root *{scrollbar-width:none;}",
@@ -1380,17 +1378,16 @@
       .join("\n");
   }
 
-  function svgToPng(svg, width, height, scale) {
+  function svgToPng(svg, width, height) {
     return new Promise(function (resolve, reject) {
       var image = new Image();
       var canvas = document.createElement("canvas");
       var context = canvas.getContext("2d");
       var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 
-      canvas.width = width * scale;
-      canvas.height = height * scale;
+      canvas.width = width;
+      canvas.height = height;
       image.onload = function () {
-        context.scale(scale, scale);
         context.drawImage(image, 0, 0, width, height);
         resolve(canvas.toDataURL("image/png"));
       };
@@ -1401,12 +1398,12 @@
 
   function buildReceiptTextImage(receipt) {
     var style = window.getComputedStyle(document.documentElement);
-    var bg = style.getPropertyValue("--bg").trim() || "#fdfcf7";
+    var bg = style.getPropertyValue("--receipt-bg").trim() || "#ffffff";
     var ink = style.getPropertyValue("--ink").trim() || "#151515";
     var muted = style.getPropertyValue("--muted").trim() || "#69665f";
     var accent = style.getPropertyValue("--accent-2").trim() || "#225c7a";
     var lines = normalizeReceiptLines(receipt.innerText);
-    var scale = 2;
+    var scale = 3;
     var width = 760;
     var paddingX = 44;
     var paddingY = 44;
@@ -1487,10 +1484,10 @@
   }
 
   function getReceiptLineKind(line) {
-    if (/^(CODE PERSONA|SHARED CODE|GENERATED|DURATION|FIT|UNCLEAR|SIGNATURE|PACE|CODE |STATUS|TAGS)/.test(line)) {
+    if (/^(CODE PERSONA|SHARED CODE|GENERATED|DURATION|FIT|UNCLEAR|SIGNATURE|CODE |STATUS|TAGS)/.test(line)) {
       return "muted";
     }
-    if (/^(\+|\||\[|FIT|UNCLEAR|STABLE|BOUND|PARSE|DRIVE|LINK|signature|pace|clarity|packet|receipt)/.test(line)) {
+    if (/^(\+|\||\[|FIT|UNCLEAR|STABLE|BOUND|PARSE|DRIVE|LINK|signature|clarity|packet|receipt)/.test(line)) {
       return "accent";
     }
     return "ink";
@@ -1522,7 +1519,7 @@
       '<p class="receipt-kicker">RECEIPT IMAGE / 小票图片</p>',
       '<img alt="代码人格小票图片" src="' + dataUrl + '" />',
       '<p class="hint ok">' +
-        (isIos ? "iOS：长按图片，选择“存储到照片”。" : "长按图片保存到相册。") +
+        (isIos ? "长按图片，选择“存储到照片”。" : "长按图片保存到相册。") +
         "</p>",
       '<button class="text-button" type="button" data-action="close-image">close 关闭</button>',
       "</div>"
@@ -1558,9 +1555,8 @@
       "generated: " + formatDateTime(generatedAt),
       "duration: " + formatDuration(durationMs),
       "signature: " + signature,
-      "pace: " + getPaceLabel(durationMs),
       "clarity: " + getClarityLabel(result.answerStats),
-      mergeMotto(result.persona.summary, extras.motto),
+      result.persona.summary,
       "tags: " + extras.tags.join(" / "),
       "",
       formatReceiptBars(result.raw, result.match, result.answerStats)
@@ -1573,7 +1569,7 @@
       "Code Persona Test",
       persona.code + " " + persona.status + " - " + persona.name,
       persona.face,
-      mergeMotto(persona.summary, extras.motto),
+      persona.summary,
       "tags: " + extras.tags.join(" / ")
     ].join("\n");
   }

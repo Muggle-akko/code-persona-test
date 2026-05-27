@@ -2,7 +2,7 @@
   font-family: "Code Persona Mono";
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
+  font-display: block;
   src: url("./assets/fonts/JetBrainsMono-Regular.woff2") format("woff2");
 }
 
@@ -10,7 +10,7 @@
   font-family: "Code Persona Mono";
   font-style: normal;
   font-weight: 700;
-  font-display: swap;
+  font-display: block;
   src: url("./assets/fonts/JetBrainsMono-Bold.woff2") format("woff2");
 }
 
@@ -18,7 +18,7 @@
   font-family: "Code Persona SC";
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
+  font-display: block;
   src: url("./assets/fonts/NotoSansSC-Regular.otf") format("opentype");
 }
 
@@ -31,6 +31,7 @@
   --accent: #2f6f4e;
   --accent-2: #225c7a;
   --soft: #f5f1e8;
+  --receipt-bg: #ffffff;
   --warn: #8b3d22;
   --shadow: rgba(35, 31, 24, 0.08);
   --mono: "Code Persona Mono", "Code Persona SC", ui-monospace, SFMono-Regular,
@@ -48,6 +49,7 @@
   --accent: #86cfa3;
   --accent-2: #9cc7d9;
   --soft: #1a1915;
+  --receipt-bg: #171717;
   --warn: #f0a37f;
   --shadow: rgba(0, 0, 0, 0.35);
 }
@@ -168,8 +170,13 @@ input {
   overflow: hidden;
   margin: 0 0 26px;
   color: var(--accent-2);
+  font-family: "Code Persona Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: clamp(9px, 2.65vw, 14px);
+  font-synthesis: none;
+  font-variant-ligatures: none;
   line-height: 1.2;
+  text-rendering: geometricPrecision;
   white-space: pre;
 }
 
@@ -511,15 +518,19 @@ input {
 
 .receipt-paper {
   position: relative;
+  overflow: hidden;
   width: min(100%, 540px);
   margin: 0 auto;
   padding: 18px 18px 20px;
   border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg) 86%, white);
+  background: var(--receipt-bg);
   box-shadow: 0 8px 28px var(--shadow);
   font-family: var(--receipt);
+  font-synthesis: none;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
   line-height: 1.45;
+  overflow-wrap: break-word;
 }
 
 .receipt-paper,
@@ -531,10 +542,6 @@ input {
   display: none;
   width: 0;
   height: 0;
-}
-
-:root[data-theme="dark"] .receipt-paper {
-  background: color-mix(in srgb, var(--bg) 90%, white 4%);
 }
 
 .receipt-paper::before,
@@ -609,13 +616,14 @@ input {
 
 .receipt-facts div {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 14px;
+  grid-template-columns: minmax(112px, 0.86fr) minmax(0, 1fr);
+  gap: 10px;
   align-items: baseline;
 }
 
 .receipt-facts dt,
 .receipt-facts dd {
+  min-width: 0;
   margin: 0;
 }
 
@@ -626,10 +634,21 @@ input {
 }
 
 .receipt-facts dd {
+  justify-self: end;
+  max-width: 100%;
   color: var(--ink);
   font-size: 13px;
   text-align: right;
   overflow-wrap: anywhere;
+}
+
+.result-section p {
+  margin: 0;
+  font-family: "Code Persona SC", "Code Persona Mono", ui-monospace, monospace;
+  font-size: clamp(14px, 3.7vw, 16px);
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .visualizer {
@@ -643,6 +662,54 @@ input {
   font-size: 12px;
   line-height: 1.5;
   white-space: pre;
+}
+
+.signal-bars {
+  display: grid;
+  gap: 7px;
+  margin: 8px 0 0;
+  padding: 10px 0;
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.signal-row {
+  display: grid;
+  grid-template-columns: minmax(96px, 28%) minmax(0, 1fr) 4ch;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.signal-label,
+.signal-percent {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.signal-track {
+  position: relative;
+  min-width: 0;
+  height: 14px;
+  overflow: hidden;
+  background-color: var(--receipt-bg);
+  background-image: radial-gradient(var(--line) 0.7px, transparent 0.8px);
+  background-size: 3px 3px;
+}
+
+.signal-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--value);
+  background: var(--ink);
+}
+
+.signal-percent {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .receipt-tags {
