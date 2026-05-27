@@ -228,7 +228,7 @@
     code: "418",
     status: "I'm a teapot",
     name: "反骨型",
-    summary: "你不喜欢按常理走，也不喜欢被定义。题目问你咖啡还是茶，你选择把自己活成茶壶。如果世界无法解析你，先优雅地冒个热气。",
+    summary: "你不喜欢按常理走，也不喜欢被定义。题目问你咖啡还是茶，你选择把自己活成茶壶。",
     strength: "跳出框架、拒绝被粗暴归类、拥有奇怪但有效的自洽。",
     caution: "偶尔也要给世界一点可解析的回答，不然大家只能围着你猜。",
     target: levelsToVector("H,M,H,L,L,H,L,H,H,H,L,M,M,L,H"),
@@ -397,11 +397,11 @@
       '</div>',
       '<div class="block">',
       '<p class="prompt">name 输入名字</p>',
-      '<label class="name-line"><span class="input-marker">&gt;</span><input id="name-input" class="name-input" type="text" maxlength="24" placeholder="user" value="' +
+      '<label class="name-line"><span class="input-marker">&gt;</span><input id="name-input" class="name-input" type="text" maxlength="24" placeholder="不输入默认填写 user" value="' +
         escapeHtml(state.userName === "user" ? "" : state.userName) +
         '" autocomplete="nickname" /></label>',
       '<div class="mini-actions">',
-      '<button class="line-button" type="button" data-action="start-test">start 开始测试</button>',
+      '<button class="line-button" type="button" data-action="start-test">start 开始测试</button>', 
       "</div>",
       state.notice ? '<p class="hint warn">' + escapeHtml(state.notice) + "</p>" : "",
       "</div>",
@@ -499,25 +499,25 @@
       '<h1 class="result-title">' + escapeHtml(persona.name) + "</h1>",
       '<p class="receipt-stamp">' + escapeHtml(getReceiptStamp(persona)) + "</p>",
       '<dl class="receipt-facts">',
+      fact("SIGNATURE 签名", signature),
       fact("GENERATED 生成时间", formatDateTime(generatedAt)),
       fact("DURATION 答题用时", formatDuration(durationMs)),
-      fact("FIT 匹配感", result.match + "%"),
+      fact("FIT 匹配度", result.match + "%"),
       fact("UNCLEAR 不确定", result.answerStats.dCount + "/" + questions.length),
-      fact("SIGNATURE 小票签名", signature),
       fact("TAGS 标签", extras.tags.join(" / ")),
       "</dl>",
       '<div class="result-grid">',
       section("DIAGNOSIS 诊断", persona.summary),
       section("BEST AT 擅长", persona.strength),
-      section("WATCH OUT 注意", persona.caution),
+      section("SUGGESTION 注意", persona.caution),
       '<div class="result-section"><h2>SIGNALS 信号</h2>' + renderSignalBars(signalRows) + "</div>",
       "</div>",
-      '<p class="receipt-footer">-- receipt sealed / 小票已封存 --</p>',
+      '<p class="receipt-footer">-- Thanks You / 欢迎下次再来 --</p>',
       "</article>",
       '<div class="actions">',
-      '<button class="text-button" type="button" data-action="restart">restart 重新测</button>',
+      '<button class="text-button" type="button" data-action="restart">restart 重测</button>',
       '<button class="text-button" type="button" data-action="copy">copy 复制</button>',
-      '<button class="text-button" type="button" data-action="share">share 分享小票</button>',
+      '<button class="text-button" type="button" data-action="share">share 保存图片</button>',
       "</div>",
       state.notice ? '<p class="hint ok">' + escapeHtml(state.notice) + "</p>" : ""
     ].join("");
@@ -544,15 +544,15 @@
       '<div class="result-grid">',
       section("DIAGNOSIS 诊断", persona.summary),
       section("BEST AT 擅长", persona.strength),
-      section("WATCH OUT 注意", persona.caution),
+      section("SUGGESTION 注意", persona.caution),
       '<div class="result-section"><h2>SIGNALS 信号</h2>' + renderSignalBars(getPersonaSignalRows(persona)) + "</div>",
       "</div>",
-      '<p class="receipt-footer">-- Thanks for testing / 欢迎下次再来 --</p>',
+      '<p class="receipt-footer">-- Thanks You / 欢迎下次再来 --</p>',
       "</article>",
       '<div class="actions">',
-      '<button class="text-button" type="button" data-action="restart">restart 再测一次</button>',
+      '<button class="text-button" type="button" data-action="restart">restart 重测</button>',
       '<button class="text-button" type="button" data-action="copy-shared">copy 复制</button>',
-      '<button class="text-button" type="button" data-action="share">share 分享小票</button>',
+      '<button class="text-button" type="button" data-action="share">share 保存图片</button>',
       "</div>",
       state.notice ? '<p class="hint ok">' + escapeHtml(state.notice) + "</p>" : ""
     ].join("");
@@ -706,25 +706,12 @@
       });
 
     var best = nearest[0];
-    var tieSpread = nearest[1] ? nearest[1].distance - nearest[0].distance : 99;
-    var closeMatches = nearest.filter(function (item) {
-      return item.distance <= best.distance + 1;
-    }).length;
     var hiddenReason = "";
     var useHidden = false;
 
-    if (answerStats.dCount >= 14) {
+    if (answerStats.total === questions.length && answerStats.dCount === questions.length) {
       useHidden = true;
-      hiddenReason = "你选择了太多“无法判断”。系统只收到一团雾，于是递出一张茶壶小票。";
-    } else if (best.match < 60) {
-      useHidden = true;
-      hiddenReason = "你的答案和常规人格码距离都比较远，像一个拒绝被普通状态码收编的响应。";
-    } else if (closeMatches >= 4 && best.match < 78) {
-      useHidden = true;
-      hiddenReason = "多个人格码同时靠近你，信号像被折叠了一样，普通匹配无法稳定落点。";
-    } else if (answerStats.dCount >= 9 && best.match < 72) {
-      useHidden = true;
-      hiddenReason = "你有不少“不好判断”，同时匹配又不够确定，系统决定启用茶壶协议。";
+      hiddenReason = "你全程选择了“无法判断”!";
     }
 
     var finalPersona = useHidden ? hiddenPersona : best.persona;
@@ -787,13 +774,13 @@
 
   function getReceiptSignalRows(raw, match, answerStats) {
     return [
-      ["FIT 匹配", match / 100],
+      ["FIT 匹配度", match / 100],
       ["UNCLEAR 模糊", answerStats.dCount / questions.length],
-      ["STABLE 稳定", normalizeGroup(raw, 0, 3)],
-      ["BOUND 边界", normalizeGroup(raw, 3, 6)],
-      ["PARSE 解析", normalizeGroup(raw, 6, 9)],
-      ["DRIVE 行动", normalizeGroup(raw, 9, 12)],
-      ["LINK 连接", normalizeGroup(raw, 12, 15)]
+      ["STABLE 稳定性", normalizeGroup(raw, 0, 3)],
+      ["BOUND 边界感", normalizeGroup(raw, 3, 6)],
+      ["PARSE 理解力", normalizeGroup(raw, 6, 9)],
+      ["DRIVE 行动力", normalizeGroup(raw, 9, 12)],
+      ["LINK 协作力", normalizeGroup(raw, 12, 15)]
     ];
   }
 
@@ -916,26 +903,26 @@
 
   function getPersonaTags(code) {
     var tags = {
-      "200": ["可靠", "准点", "闭环"],
-      "201": ["开局", "创造", "原型"],
-      "204": ["低噪", "极简", "省话"],
-      "301": ["迁移", "重整", "长期"],
-      "302": ["灵活", "转向", "临场"],
-      "304": ["复用", "稳定", "缓存"],
-      "400": ["纠错", "澄清", "雷达"],
-      "401": ["边界", "授权", "门禁"],
+      "200": ["可靠", "负责", "守约"],
+      "201": ["想象力", "创造", "思维跳跃"],
+      "204": ["克制", "冷静", "理性"],
+      "301": ["断舍离", "重构", "长期规划"],
+      "302": ["灵活", "随机应变", "临场力"],
+      "304": ["保守", "节约", "恋旧"],
+      "400": ["敏锐", "洞察力", "强势"],
+      "401": ["边界感", "守矩", "原则"],
       "402": ["成本", "预算", "精力值"],
-      "403": ["原则", "拒绝", "红线"],
-      "404": ["探索", "支线", "找路"],
-      "408": ["慢热", "加载", "深思"],
-      "409": ["冲突", "拆解", "对齐"],
-      "422": ["解析", "追问", "合理性"],
+      "403": ["拒绝", "无畏", "禁欲"],
+      "404": ["探索", "冒险", "路痴"],
+      "408": ["慢热", "谨慎", "深思"],
+      "409": ["协作", "计划", "整理"],
+      "422": ["领导力", "严谨", "权威"],
       "429": ["限流", "排队", "过载"],
-      "500": ["高压", "内核", "散热"],
-      "502": ["转译", "连接", "桥"],
-      "503": ["维护", "恢复", "下线"],
-      "504": ["等待", "超时", "换路"],
-      "418": ["彩蛋", "茶壶", "不可解析"]
+      "500": ["高压", "内耗", "卷王"],
+      "502": ["交际花", "协作", "外向"],
+      "503": ["躺平", "自爱", "不内耗"],
+      "504": ["躺平", "自爱", "不内耗"],
+      "418": ["神秘", "反骨", "不可解析"]
     };
 
     return tags[code] || tags["418"];
